@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-border: #e5e4e7;
+  --color-accent: #aa3bff;
+}
+
+:root {
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.45;
+  color: #111827;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f3f4f6;
+    background: #0b0c15;
+  }
+}
+
+table {
+  border-collapse: collapse;
+}
