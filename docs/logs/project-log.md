@@ -73,11 +73,23 @@ Claims include realistic names, claim IDs, and agent summaries for UI developmen
 ### Minimal Tests
 
 Added `server/tests/test_claims.py` with 3 critical validation tests:
+
 - Confidence bounds enforcement (reject >1 or <0)
 - Blank string rejection for required fields
 - Valid claim serialization
 
-Added pytest configuration in `server/pyproject.toml` for easy test execution: `python -m pytest server/tests`
+Added pytest configuration in `server/pyproject.toml` for easy test execution: `python -m pytest server/tests`.
+
+---
+
+## GET /claims Endpoint — 2026-07-04
+
+Implemented `server/main.py` with:
+
+- `GET /claims` endpoint using `Annotated` type hints for FastAPI Query parameters with descriptions
+- Uses `filter_claims()` function to filter in-memory claims across claimant_name, claim_id, and agent_summary
+- Returns `ClaimsResponse` with `items`, `total`, and `filters` fields
+- Invalid enum values automatically return 422 via Pydantic validation
 
 ---
 
@@ -90,6 +102,10 @@ Added Ruff configuration (`server/pyproject.toml`) for Python linting and format
 Updated `package.json` lint-staged to run Prettier on all staged files before TypeScript checks.
 
 Added `ruff==0.12.1` to `server/requirements.txt` for automated linting.
+
+## Poetry Setup and Dependency Management — 2026-07-04
+
+Added Poetry for Python dependency management in the backend to ensure reproducible builds and easier setup for reviewers.
 
 ### Time Constraint Note
 
