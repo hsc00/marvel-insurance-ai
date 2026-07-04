@@ -1,5 +1,11 @@
-fastapi==0.111.0
-pydantic==2.7.4
+fastapi==0.139.0
+pydantic==2.13.4
+pydantic-core==2.46.4
 python-dotenv==1.0.1
 pytest==8.2.0
 ruff==0.12.1
+uvicorn[standard]==0.30.6
+# Starlette is a transitive dependency of FastAPI.
+# It is listed explicitly here to document the resolved framework stack version
+# and make the ASGI layer visible for reviewers/debugging.
+starlette==1.3.1

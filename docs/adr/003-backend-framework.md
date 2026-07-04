@@ -13,7 +13,7 @@ We need to implement a small backend/data slice that:
 
 ## Decision
 
-We will use Python + FastAPI for the backend implementation.
+We will use Python + FastAPI for the backend implementation, managed with **Poetry** for dependency management and **Uvicorn** as the ASGI server for local development.
 
 ## Alternatives Considered
 
@@ -51,6 +51,8 @@ Cons:
 ### Positive
 
 - Direct alignment with company tech stack
+- Poetry for reliable dependency management and virtual environments
+- Uvicorn as a fast ASGI server for development and production
 - FastAPI provides automatic request validation with Pydantic
 - Built-in OpenAPI documentation generation
 - Modern async capabilities if needed
