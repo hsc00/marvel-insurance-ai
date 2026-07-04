@@ -2,7 +2,9 @@
 
 from typing import Annotated
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from src.data.seed_claims import CLAIMS_DATA
 from src.models.claims import (
     Claim,
@@ -10,9 +12,24 @@ from src.models.claims import (
     ClaimPriority,
     ClaimsResponse,
     ClaimStatus,
+    ErrorResponse,
 )
 
 app = FastAPI()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(_request: Request, exc: RequestValidationError):
+    """Normalize FastAPI validation errors into the project's ErrorResponse shape."""
+    errors = [f"{'.'.join(map(str, err['loc']))}: {err['msg']}" for err in exc.errors()]
+    return JSONResponse(
+        status_code=422,
+        content=ErrorResponse(
+            detail='Validation failed',
+            status_code=422,
+            errors=errors,
+        ).model_dump(mode='json'),
+    )
 
 
 @app.get('/claims')

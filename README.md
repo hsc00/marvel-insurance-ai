@@ -38,10 +38,16 @@ poetry run pytest       # run backend tests
 
 Start the backend:
 
-**Windows / macOS / Linux**:
+**macOS / Linux**:
 
 ```bash
 cd server && poetry run uvicorn main:app --reload --port 8000
+```
+
+**Windows**:
+
+```bash
+cd server ; poetry run uvicorn main:app --reload --port 8000
 ```
 
 For optional development commands:

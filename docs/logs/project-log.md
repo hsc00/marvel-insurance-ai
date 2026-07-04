@@ -103,6 +103,11 @@ Updated `package.json` lint-staged to run Prettier on all staged files before Ty
 
 Added `ruff==0.12.1` to `server/requirements.txt` for automated linting.
 
+## Explicit 422 Validation Error Path — 2026-07-04
+
+Added a custom `RequestValidationError` exception handler in `server/main.py` that normalizes FastAPI's default validation errors into the project's `ErrorResponse` shape.
+I could've added integration tests to test the error correctly with FastAPI `TestClient` but for this challenge it was not added.
+
 ## Poetry Setup and Dependency Management — 2026-07-04
 
 Added Poetry for Python dependency management in the backend to ensure reproducible builds and easier setup for reviewers.
