@@ -15,9 +15,9 @@
 11. Set up `.github/agents/` and `.github/skills/`
 12. Add Husky pre-commit hook for frontend TS/TSX
 
-## Phase 1: Foundations (60 min)
+## Phase 1: Foundations (in progress)
 
-1. Add FastAPI Pydantic models for claims
+1. Add FastAPI Pydantic models for claims ✓
 2. Seed in-memory claim data
 3. Implement GET /claims with filtering
 4. Add validation + explicit error path (422)
@@ -69,3 +69,4 @@
 - No dark mode
 - No offline support
 - Minimal responsive polish
+- No CI/CD pipeline (Only local checks)
