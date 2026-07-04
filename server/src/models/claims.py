@@ -7,16 +7,16 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ClaimStatus(str, Enum):
-    PENDING = "pending"
-    IN_REVIEW = "in_review"
-    APPROVED = "approved"
-    DENIED = "denied"
+    PENDING = 'pending'
+    IN_REVIEW = 'in_review'
+    APPROVED = 'approved'
+    DENIED = 'denied'
 
 
 class ClaimPriority(str, Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
+    LOW = 'low'
+    MEDIUM = 'medium'
+    HIGH = 'high'
 
 
 class Claim(BaseModel):
@@ -31,11 +31,11 @@ class Claim(BaseModel):
     agent_summary: str = Field(..., min_length=1, max_length=500)
     confidence: float = Field(..., ge=0, le=1)
 
-    @field_validator("id", "claim_id", "claimant_name", "agent_summary")
+    @field_validator('id', 'claim_id', 'claimant_name', 'agent_summary')
     @classmethod
     def reject_blank_strings(cls, value: str) -> str:
         if not value.strip():
-            raise ValueError("must not be blank")
+            raise ValueError('must not be blank')
         return value
 
 
@@ -46,14 +46,14 @@ class ClaimFiltersApplied(BaseModel):
     priority: ClaimPriority | None = None
     search: str | None = Field(default=None, min_length=1)
 
-    @field_validator("search")
+    @field_validator('search')
     @classmethod
     def normalize_search(cls, value: str | None) -> str | None:
         if value is None:
             return None
         normalized = value.strip()
         if not normalized:
-            raise ValueError("search must not be blank")
+            raise ValueError('search must not be blank')
         return normalized
 
 
@@ -70,10 +70,10 @@ class ErrorResponse(BaseModel):
 
 
 __all__ = [
-    "Claim",
-    "ClaimFiltersApplied",
-    "ClaimPriority",
-    "ClaimsResponse",
-    "ClaimStatus",
-    "ErrorResponse",
+    'Claim',
+    'ClaimFiltersApplied',
+    'ClaimPriority',
+    'ClaimsResponse',
+    'ClaimStatus',
+    'ErrorResponse',
 ]

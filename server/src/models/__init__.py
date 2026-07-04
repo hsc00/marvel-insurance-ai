@@ -8,10 +8,10 @@ from .claims import (
 )
 
 __all__ = [
-    "Claim",
-    "ClaimFiltersApplied",
-    "ClaimPriority",
-    "ClaimsResponse",
-    "ClaimStatus",
-    "ErrorResponse",
+    'Claim',
+    'ClaimFiltersApplied',
+    'ClaimPriority',
+    'ClaimsResponse',
+    'ClaimStatus',
+    'ErrorResponse',
 ]
