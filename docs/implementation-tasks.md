@@ -23,7 +23,7 @@
 4. Add validation + explicit error path (422) ✓
 5. Implement SSE /claims/stream endpoint ✓
 6. Configure CORS ✓
-7. Mirror TypeScript types in frontend
+7. Mirror TypeScript types in frontend ✓
 
 ## Phase 2: Frontend Core (90 min)
 

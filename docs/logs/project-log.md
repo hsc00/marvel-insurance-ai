@@ -138,3 +138,34 @@ Added `CORSMiddleware` to `server/main.py`:
 - `allow_credentials=True` for cookie/auth support
 - Added `load_dotenv()` call to load environment variables from `.env` file
 - Updated `server/.env.example` with CORS configuration variables
+
+---
+
+## Frontend Type Definitions — 2026-07-04
+
+Created `client/src/types/claims.ts` to mirror backend Pydantic models.
+
+### Type Mapping: Python → TypeScript
+
+| Backend Model         | Frontend Type                   |
+| --------------------- | ------------------------------- |
+| `ClaimStatus` enum    | `type ClaimStatus` union        |
+| `ClaimPriority` enum  | `type ClaimPriority` union      |
+| `Claim` model         | `interface Claim`               |
+| `ClaimFiltersApplied` | `interface ClaimFiltersApplied` |
+| `ClaimsResponse`      | `interface ClaimsResponse`      |
+| `ErrorResponse`       | `interface ErrorResponse`       |
+
+### erasableSyntaxOnly Decision
+
+- `client/tsconfig.app.json` enables `erasableSyntaxOnly: true`
+- This disallows TypeScript `enum` syntax because it requires runtime JavaScript enum emitters
+- Python `ClaimStatus`/`ClaimPriority` string enums were therefore mirrored as TypeScript string union types
+- Runtime values remain identical to backend enum values, ensuring full API contract compatibility
+- String unions provide equivalent type safety with zero runtime overhead and better IntelliSense behavior
+
+### Contract Alignment
+
+- All field names preserved 1:1 with backend (`claim_id`, `claimant_name`, `agent_summary`, `confidence`)
+- `updated_at` typed as `string` matching FastAPI/Pydantic JSON serialization of `datetime` to ISO 8601
+- Added SSEType definitions for real-time stream events
