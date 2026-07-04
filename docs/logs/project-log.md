@@ -45,8 +45,9 @@ Created `server/src/models/__init__.py` exporting all types.
 
 ### Validation
 
-- `confidence` field constrained to 0-1 via `ge=0, le=1`
+- `confidence` field constrained to 0-1
 - String fields validated non-blank via `field_validator` and `ConfigDict(str_strip_whitespace=True)`
+- `max_length` constraints added to prevent oversized payloads
 
 ### Design Rationale: Extensibility
 
@@ -55,6 +56,28 @@ Created `server/src/models/__init__.py` exporting all types.
 - `ConfigDict(str_strip_whitespace=True)` applied consistently across models for predictable normalization
 - `__all__` export list defines intentional public API surface for clean imports
 - Standard Pydantic v2 patterns only — no custom abstractions to learn when inheriting this codebase
+
+---
+
+## Seed In-Memory Claim Data — 2026-07-04
+
+Created `server/src/data/seed_claims.py` with 8 sample claims covering all statuses and priorities:
+
+- 2 `pending` claims (high and low priority)
+- 2 `in_review` claims (medium and high priority)
+- 2 `approved` claims (medium and high priority)
+- 2 `denied` claims (low priority)
+
+Claims include realistic names, claim IDs, and agent summaries for UI development testing.
+
+### Minimal Tests
+
+Added `server/tests/test_claims.py` with 3 critical validation tests:
+- Confidence bounds enforcement (reject >1 or <0)
+- Blank string rejection for required fields
+- Valid claim serialization
+
+Added pytest configuration in `server/pyproject.toml` for easy test execution: `python -m pytest server/tests`
 
 ---
 

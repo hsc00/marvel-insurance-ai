@@ -18,7 +18,7 @@
 ## Phase 1: Foundations (in progress)
 
 1. Add FastAPI Pydantic models for claims ✓
-2. Seed in-memory claim data
+2. Seed in-memory claim data ✓
 3. Implement GET /claims with filtering
 4. Add validation + explicit error path (422)
 5. Implement SSE /claims/stream endpoint
@@ -64,9 +64,10 @@
 
 ## Sacrifices for Deadline
 
-- No table virtualization
+- No table virtualization (could be usede to improve performance)
 - No comprehensive test suite
 - No dark mode
 - No offline support
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
+- Pre commit checks only for frontend (main focus of the challenge)
