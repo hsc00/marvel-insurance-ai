@@ -1,10 +1,15 @@
 """MarvelX Claims Review API server."""
 
+import asyncio
+import random
+import json
+from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+
 from src.data.seed_claims import CLAIMS_DATA
 from src.models.claims import (
     Claim,
@@ -14,6 +19,37 @@ from src.models.claims import (
     ClaimStatus,
     ErrorResponse,
 )
+
+# Agent summaries for claim updates
+AGENT_SUMMARIES = [
+    'Under review by senior agent',
+    'Additional documentation requested',
+    'Quality check in progress',
+    'Processing payment authorization',
+    'Claim forwarded to specialist',
+]
+
+DEFAULT_RETRY_INTERVAL = 3000
+
+
+def update_claim(claim: Claim) -> Claim | None:
+    """Randomly update a claim's confidence, status, or agent summary."""
+    update_type = random.choice(['confidence', 'status', 'agent_summary'])
+
+    if update_type == 'confidence':
+        new_confidence = round(random.uniform(0.0, 1.0), 2)
+        return claim.model_copy(update={'confidence': new_confidence})
+
+    if update_type == 'status':
+        statuses = [s for s in ClaimStatus if s != claim.status]
+        if not statuses:
+            return None
+        new_status = random.choice(statuses)
+        return claim.model_copy(update={'status': new_status})
+
+    new_summary = random.choice(AGENT_SUMMARIES)
+    return claim.model_copy(update={'agent_summary': new_summary})
+
 
 app = FastAPI()
 
@@ -77,3 +113,76 @@ def filter_claims(claims: list[Claim], filters: ClaimFiltersApplied) -> list[Cla
         ]
 
     return result
+
+
+@app.get('/claims/stream')
+async def stream_claims(
+    request: Request,
+    status: Annotated[ClaimStatus | None, Query(description='Filter by claim status')] = None,
+    priority: Annotated[ClaimPriority | None, Query(description='Filter by claim priority')] = None,
+    search: Annotated[
+        str | None,
+        Query(
+            description='Search in claimant_name, claim_id, or agent_summary',
+            min_length=1,
+        ),
+    ] = None,
+) -> StreamingResponse:
+    """Stream claims with periodic updates via Server-Sent Events."""
+
+    filters = ClaimFiltersApplied(status=status, priority=priority, search=search)
+    filtered_claims = list(filter_claims(CLAIMS_DATA, filters))
+
+    async def event_generator():
+        # Send initial batch event
+        try:
+            initial_response = ClaimsResponse(
+                items=filtered_claims,
+                total=len(filtered_claims),
+                filters=filters,
+            )
+            yield f"event: initial_batch\ndata: {json.dumps(initial_response.model_dump(mode='json'))}\n\n"
+        except Exception as e:
+            yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
+            yield f"event: error\ndata: {json.dumps({'detail': 'Failed to serialize initial batch', 'error': str(e)})}\n\n"
+            return
+
+        # Send periodic claim updates
+        while not await request.is_disconnected():
+            try:
+                await asyncio.sleep(5)
+
+                # Send heartbeat comment to keep idle connections alive (proxies, load balancers)
+                yield ": heartbeat\n\n"
+
+                if not filtered_claims:
+                    continue
+
+                # Randomly select a claim to update
+                claim_index = random.randint(0, len(filtered_claims) - 1)
+                claim = filtered_claims[claim_index]
+
+                # Update the claim and skip if no valid update possible
+                updated_claim = update_claim(claim)
+                if updated_claim is None:
+                    continue
+
+                # Update the claim in filtered_claims and mark updated_at
+                filtered_claims[claim_index] = updated_claim.model_copy(
+                    update={'updated_at': datetime.now(timezone.utc)}
+                )
+
+                yield f"event: claim_update\ndata: {json.dumps(filtered_claims[claim_index].model_dump(mode='json'))}\n\n"
+            except Exception as e:
+                yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
+                yield f"event: error\ndata: {json.dumps({'detail': 'Stream processing error', 'error': str(e)})}\n\n"
+                return
+
+    return StreamingResponse(
+        event_generator(),
+        media_type='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+        },
+    )

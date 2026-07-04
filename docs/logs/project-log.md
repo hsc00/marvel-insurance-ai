@@ -116,3 +116,15 @@ Added Poetry for Python dependency management in the backend to ensure reproduci
 
 - CodeRabbit and SonarQube were only used as local extensions as that would make development slower and not produce significant gains for a single-developer project.
 - GitHub Actions pipeline was skipped to keep timebox real - local pre-commit hooks + extensions already enforce code quality at development time.
+
+## SSE Stream Error Handling and Heartbeat — 2026-07-04
+
+Guarded `event_generator()` in `server/main.py` with try/except blocks:
+
+- Initial batch event wrapped: emits `error` event on serialization failure
+- Loop body wrapped: emits `error` event on any processing error and returns gracefully
+- Added guard for empty `statuses` list when updating claim status (prevents `random.choice` on empty sequence)
+- Added periodic heartbeat comment `: heartbeat` every 5 seconds to prevent proxy/idle connection drops
+- Added `DEFAULT_RETRY_INTERVAL = 3000` (3 seconds)
+- Error events now include `retry:` field instructing SSE clients to wait before reconnecting
+- Follows SSE specification for automatic client reconnection behavior

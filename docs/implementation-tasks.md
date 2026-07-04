@@ -21,7 +21,7 @@
 2. Seed in-memory claim data ✓
 3. Implement GET /claims with filtering ✓
 4. Add validation + explicit error path (422) ✓
-5. Implement SSE /claims/stream endpoint
+5. Implement SSE /claims/stream endpoint ✓
 6. Configure CORS
 7. Mirror TypeScript types in frontend
 
@@ -70,4 +70,4 @@
 - No offline support
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
-- Pre commit checks only for frontend (main focus of the challenge)
+- Mandatory Pre commit checks only for frontend (main focus of the challenge)
