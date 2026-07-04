@@ -32,6 +32,6 @@ npm run dev
 - Frontend checks: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`
 - Backend checks: `pytest` in `server/`
 - PR checks: frontend blocking checks; backend enforcement is intentionally limited as a frontend-focused trade-off.
-- Advisory: SonarCloud only as local extension to keep development fast, CodeRabbit review during PRs.
+- Advisory: SonarQube and CodeRabbit only as local extensions to keep development more agile during commits.
 
 See `docs/adr/010-pr-guardrails.md` for the rationale.

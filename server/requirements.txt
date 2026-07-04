@@ -2,3 +2,4 @@ fastapi==0.111.0
 pydantic==2.7.4
 python-dotenv==1.0.1
 pytest==8.2.0
+ruff==0.12.1
