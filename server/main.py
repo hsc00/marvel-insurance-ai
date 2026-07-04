@@ -1,13 +1,16 @@
 """MarvelX Claims Review API server."""
 
 import asyncio
+import os
 import random
 import json
 from datetime import datetime, timezone
 from typing import Annotated
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from src.data.seed_claims import CLAIMS_DATA
@@ -18,6 +21,25 @@ from src.models.claims import (
     ClaimsResponse,
     ClaimStatus,
     ErrorResponse,
+)
+
+# Load environment variables from .env file
+load_dotenv()
+
+# CORS configuration
+CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:5173').split(',')
+CORS_METHODS = os.getenv('CORS_METHODS', '*').split(',')
+CORS_HEADERS = os.getenv('CORS_HEADERS', '*').split(',')
+
+app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=CORS_METHODS,
+    allow_headers=CORS_HEADERS,
 )
 
 # Agent summaries for claim updates
@@ -49,9 +71,6 @@ def update_claim(claim: Claim) -> Claim | None:
 
     new_summary = random.choice(AGENT_SUMMARIES)
     return claim.model_copy(update={'agent_summary': new_summary})
-
-
-app = FastAPI()
 
 
 @app.exception_handler(RequestValidationError)

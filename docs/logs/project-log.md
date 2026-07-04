@@ -128,3 +128,13 @@ Guarded `event_generator()` in `server/main.py` with try/except blocks:
 - Added `DEFAULT_RETRY_INTERVAL = 3000` (3 seconds)
 - Error events now include `retry:` field instructing SSE clients to wait before reconnecting
 - Follows SSE specification for automatic client reconnection behavior
+
+## CORS Configuration — 2026-07-04
+
+Added `CORSMiddleware` to `server/main.py`:
+
+- Configured via environment variables: `CORS_ORIGINS`, `CORS_METHODS`, `CORS_HEADERS`
+- Defaults: `CORS_ORIGINS=http://localhost:5173` (Vite dev server), `CORS_METHODS=*`, `CORS_HEADERS=*`
+- `allow_credentials=True` for cookie/auth support
+- Added `load_dotenv()` call to load environment variables from `.env` file
+- Updated `server/.env.example` with CORS configuration variables
