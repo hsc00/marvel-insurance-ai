@@ -71,7 +71,7 @@ def update_claim(claim: Claim) -> Claim | None:
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(_request: Request, exc: RequestValidationError):
     """Normalize FastAPI validation errors into the project's ErrorResponse shape."""
-    errors = [f"{'.'.join(map(str, err['loc']))}: {err['msg']}" for err in exc.errors()]
+    errors = [f'{".".join(map(str, err["loc"]))}: {err["msg"]}' for err in exc.errors()]
     return JSONResponse(
         status_code=422,
         content=ErrorResponse(
@@ -166,14 +166,12 @@ async def stream_claims(
                 filters=filters,
             )
             initial_payload = initial_response.model_dump_json()
-            yield f"event: initial_batch\ndata: {initial_payload}\n\n"
+            yield f'event: initial_batch\ndata: {initial_payload}\n\n'
         except Exception:
-            logging.exception("Failed to serialize initial batch for SSE stream")
-            yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-            error_payload = json.dumps(
-                {'detail': 'Failed to serialize initial batch'}
-            )
-            yield f"event: error\ndata: {error_payload}\n\n"
+            logging.exception('Failed to serialize initial batch for SSE stream')
+            yield f'retry: {DEFAULT_RETRY_INTERVAL}\n'
+            error_payload = json.dumps({'detail': 'Failed to serialize initial batch'})
+            yield f'event: error\ndata: {error_payload}\n\n'
             return
 
         # Send periodic claim updates
@@ -182,7 +180,7 @@ async def stream_claims(
                 await asyncio.sleep(STREAM_UPDATE_INTERVAL_SECONDS)
 
                 # Send heartbeat comment to keep idle connections alive
-                yield ": heartbeat\n\n"
+                yield ': heartbeat\n\n'
 
                 if not filtered_claims:
                     continue
@@ -202,14 +200,12 @@ async def stream_claims(
                 )
 
                 update_payload = filtered_claims[claim_index].model_dump_json()
-                yield f"event: claim_update\ndata: {update_payload}\n\n"
+                yield f'event: claim_update\ndata: {update_payload}\n\n'
             except Exception:
-                logging.exception("Stream processing error in SSE event_generator")
-                yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-                stream_error_payload = json.dumps(
-                    {'detail': 'Stream processing error'}
-                )
-                yield f"event: error\ndata: {stream_error_payload}\n\n"
+                logging.exception('Stream processing error in SSE event_generator')
+                yield f'retry: {DEFAULT_RETRY_INTERVAL}\n'
+                stream_error_payload = json.dumps({'detail': 'Stream processing error'})
+                yield f'event: error\ndata: {stream_error_payload}\n\n'
                 return
 
     return StreamingResponse(
