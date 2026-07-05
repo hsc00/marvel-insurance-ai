@@ -112,7 +112,7 @@ class TestGetClaimsEndpoint:
 
     def test_filter_by_search_claim_id(self) -> None:
         """Search should match claim_id field."""
-        filters = ClaimFiltersApplied(status=None, priority=None, search='CLM-2024-003')
+        filters = ClaimFiltersApplied(status=None, priority=None, search='CLM-2026-003')
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 1
         assert filtered[0].claimant_name == 'Carol Davis'
