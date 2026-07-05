@@ -1,26 +1,24 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-border: #e5e4e7;
-  --color-accent: #aa3bff;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-accent: #2563eb;
+  --color-gray-25: #0a0a0a;
 }
 
-:root {
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.45;
-  color: #111827;
-  background: #ffffff;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
+    font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.45;
     color: #f3f4f6;
-    background: #0b0c15;
+    background: #0a0a0a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-table {
-  border-collapse: collapse;
+@layer components {
+  table {
+    border-collapse: collapse;
+  }
 }

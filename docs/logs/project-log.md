@@ -103,10 +103,14 @@ Updated `package.json` lint-staged to run Prettier on all staged files before Ty
 
 Added `ruff==0.12.1` to `server/requirements.txt` for automated linting.
 
+---
+
 ## Explicit 422 Validation Error Path — 2026-07-04
 
 Added a custom `RequestValidationError` exception handler in `server/main.py` that normalizes FastAPI's default validation errors into the project's `ErrorResponse` shape.
 I could've added integration tests to test the error correctly with FastAPI `TestClient` but for this challenge it was not added.
+
+---
 
 ## Poetry Setup and Dependency Management — 2026-07-04
 
@@ -116,6 +120,8 @@ Added Poetry for Python dependency management in the backend to ensure reproduci
 
 - CodeRabbit and SonarQube were only used as local extensions as that would make development slower and not produce significant gains for a single-developer project.
 - GitHub Actions pipeline was skipped to keep timebox real - local pre-commit hooks + extensions already enforce code quality at development time.
+
+---
 
 ## SSE Stream Error Handling and Heartbeat — 2026-07-04
 
@@ -128,6 +134,8 @@ Guarded `event_generator()` in `server/main.py` with try/except blocks:
 - Added `DEFAULT_RETRY_INTERVAL = 3000` (3 seconds)
 - Error events now include `retry:` field instructing SSE clients to wait before reconnecting
 - Follows SSE specification for automatic client reconnection behavior
+
+---
 
 ## CORS Configuration — 2026-07-04
 
@@ -169,3 +177,25 @@ Created `client/src/types/claims.ts` to mirror backend Pydantic models.
 - All field names preserved 1:1 with backend (`claim_id`, `claimant_name`, `agent_summary`, `confidence`)
 - `updated_at` typed as `string` matching FastAPI/Pydantic JSON serialization of `datetime` to ISO 8601
 - Added SSEType definitions for real-time stream events
+
+---
+
+## ClaimsTable UI Feature — 2026-07-04
+
+### Files Created
+
+- `client/src/api/claims.ts` - fetchClaims helper calling GET /api/claims with filter params
+- `client/src/hooks/useClaimsQuery.ts` - TanStack Query hook with staleTime/gcTime caching
+- `client/src/components/ClaimsTable.tsx` - responsive table wrapper with ClaimRow list
+- `client/src/components/ClaimRow.tsx` - single claim row with status/priority badges, confidence progress bar
+- `client/src/components/FilterBar.tsx` - status, priority, and search filter controls
+- `client/src/components/LoadingState.tsx` - loading spinner with accessible role="status"
+- `client/src/components/ErrorState.tsx` - error display with retry button
+- `client/src/components/EmptyState.tsx` - empty state for no matching claims
+
+### Accessibility
+
+- All interactive elements have proper aria-label attributes
+- Keyboard focus rings via focus:outline-none focus:ring-2 focus:ring-accent
+- Role attributes on status/error/empty states for screen readers
+- sr-only labels for form inputs

@@ -15,7 +15,7 @@
 11. Set up `.github/agents/` and `.github/skills/`
 12. Add Husky pre-commit hook for frontend TS/TSX
 
-## Phase 1: Foundations (in progress)
+## Phase 1: Foundations (completed)
 
 1. Add FastAPI Pydantic models for claims ✓
 2. Seed in-memory claim data ✓
@@ -25,16 +25,16 @@
 6. Configure CORS ✓
 7. Mirror TypeScript types in frontend ✓
 
-## Phase 2: Frontend Core (90 min)
+## Phase 2: Frontend Core (in progress)
 
-1. ClaimsTable component
-2. ClaimRow component
-3. FilterBar with status/priority/search
-4. LoadingState, ErrorState, EmptyState
-5. TanStack Query integration
+1. ClaimsTable component ✓
+2. ClaimRow component ✓
+3. FilterBar with status/priority/search ✓
+4. LoadingState, ErrorState, EmptyState ✓
+5. TanStack Query integration ✓
 6. SSE hook for real-time updates
 7. Responsive layout basics
-8. Accessibility: keyboard nav, focus states, ARIA
+8. Accessibility: keyboard nav, focus states, ARIA ✓
 
 ## Phase 3: Polish & Real-time (45 min)
 
@@ -64,10 +64,11 @@
 
 ## Sacrifices for Deadline
 
-- No table virtualization (could be usede to improve performance)
-- No comprehensive test suite
-- No dark mode
+- No table virtualization (could be used to improve performance)
+- No comprehensive test suite (just minimal tests to show capabilities)
+- No theming
 - No offline support
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
-- Mandatory Pre commit checks only for frontend (main focus of the challenge)
+- Mandatory pre commit checks only for frontend (main focus of the challenge)
+- No debounce on search input (rapid typing currently fires one request per keystroke)

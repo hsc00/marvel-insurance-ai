@@ -131,7 +131,7 @@ def filter_claims(claims: list[Claim], filters: ClaimFiltersApplied) -> list[Cla
             or search_lower in claim.agent_summary.lower()
         ]
 
-    return result
+    return sorted(result, key=lambda claim: claim.updated_at)
 
 
 @app.get('/claims/stream')
