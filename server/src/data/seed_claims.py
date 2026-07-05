@@ -82,5 +82,5 @@ CLAIMS_DATA: list[Claim] = [
         updated_at=datetime(2026, 6, 15, 12, 30, 0, tzinfo=timezone.utc),
         agent_summary='Claim submitted for property damage',
         confidence=0.55,
-    ),
+    )
 ]

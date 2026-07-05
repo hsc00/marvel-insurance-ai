@@ -19,6 +19,13 @@ class ClaimPriority(str, Enum):
     HIGH = 'high'
 
 
+class ClaimSortField(str, Enum):
+    UPDATED_AT = 'updated_at'
+    CONFIDENCE = 'confidence'
+    CLAIMANT_NAME = 'claimant_name'
+    STATUS = 'status'
+
+
 class Claim(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -45,6 +52,7 @@ class ClaimFiltersApplied(BaseModel):
     status: ClaimStatus | None = None
     priority: ClaimPriority | None = None
     search: str | None = Field(default=None, min_length=1)
+    sort: ClaimSortField | None = None
 
     @field_validator('search')
     @classmethod
@@ -73,6 +81,7 @@ __all__ = [
     'Claim',
     'ClaimFiltersApplied',
     'ClaimPriority',
+    'ClaimSortField',
     'ClaimsResponse',
     'ClaimStatus',
     'ErrorResponse',

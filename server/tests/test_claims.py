@@ -11,6 +11,7 @@ from src.models.claims import (
     Claim,
     ClaimFiltersApplied,
     ClaimPriority,
+    ClaimSortField,
     ClaimsResponse,
     ClaimStatus,
 )
@@ -150,3 +151,31 @@ class TestGetClaimsEndpoint:
         """Blank search string should be rejected by Pydantic validation."""
         with pytest.raises(ValidationError):
             ClaimFiltersApplied(search='   ')
+
+    def test_sort_by_updated_at_default(self) -> None:
+        """Default sort returns newest claims first."""
+        filters = ClaimFiltersApplied(sort=ClaimSortField.UPDATED_AT)
+        filtered = filter_claims(CLAIMS_DATA, filters)
+        dates = [claim.updated_at for claim in filtered]
+        assert dates == sorted(dates, reverse=True)
+
+    def test_sort_by_claimant_name(self) -> None:
+        """Sort by claimant_name should return alphabetical order."""
+        filters = ClaimFiltersApplied(sort=ClaimSortField.CLAIMANT_NAME)
+        filtered = filter_claims(CLAIMS_DATA, filters)
+        names = [claim.claimant_name.lower() for claim in filtered]
+        assert names == sorted(names)
+
+    def test_sort_by_confidence(self) -> None:
+        """Sort by confidence should return highest confidence first."""
+        filters = ClaimFiltersApplied(sort=ClaimSortField.CONFIDENCE)
+        filtered = filter_claims(CLAIMS_DATA, filters)
+        confidences = [claim.confidence for claim in filtered]
+        assert confidences == sorted(confidences, reverse=True)
+
+    def test_sort_by_status(self) -> None:
+        """Sort by status should return deterministic enum order."""
+        filters = ClaimFiltersApplied(sort=ClaimSortField.STATUS)
+        filtered = filter_claims(CLAIMS_DATA, filters)
+        statuses = [claim.status for claim in filtered]
+        assert statuses == sorted(statuses, key=lambda status: status.value)

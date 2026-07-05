@@ -3,36 +3,26 @@
 import asyncio
 import json
 import logging
-import os
 import random
 from datetime import datetime, timezone
 from typing import Annotated
 
-from dotenv import load_dotenv
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from src.config import CLAIMS_ROUTE, CLAIMS_STREAM_ROUTE, CORS_HEADERS, CORS_METHODS, CORS_ORIGINS
 from src.data.seed_claims import CLAIMS_DATA
 from src.models.claims import (
     Claim,
     ClaimFiltersApplied,
     ClaimPriority,
+    ClaimSortField,
     ClaimsResponse,
     ClaimStatus,
     ErrorResponse,
 )
-
-logging.basicConfig(level=logging.INFO)
-
-# Load environment variables from .env file
-load_dotenv()
-
-# CORS configuration
-CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:5173').split(',')
-CORS_METHODS = os.getenv('CORS_METHODS', '*').split(',')
-CORS_HEADERS = os.getenv('CORS_HEADERS', '*').split(',')
 
 app = FastAPI()
 
@@ -92,7 +82,7 @@ async def validation_exception_handler(_request: Request, exc: RequestValidation
     )
 
 
-@app.get('/claims')
+@app.get(CLAIMS_ROUTE)
 def get_claims(
     status: Annotated[ClaimStatus | None, Query(description='Filter by claim status')] = None,
     priority: Annotated[ClaimPriority | None, Query(description='Filter by claim priority')] = None,
@@ -103,9 +93,13 @@ def get_claims(
             min_length=1,
         ),
     ] = None,
+    sort: Annotated[
+        ClaimSortField | None,
+        Query(description='Sort results by field'),
+    ] = None,
 ) -> ClaimsResponse:
-    """Get claims with optional filtering by status, priority, and search terms."""
-    filters = ClaimFiltersApplied(status=status, priority=priority, search=search)
+    """Get claims with optional filtering by status, priority, search terms, and sort field."""
+    filters = ClaimFiltersApplied(status=status, priority=priority, search=search, sort=sort)
 
     filtered_claims = list(filter_claims(CLAIMS_DATA, filters))
 
@@ -136,10 +130,16 @@ def filter_claims(claims: list[Claim], filters: ClaimFiltersApplied) -> list[Cla
             or search_lower in claim.agent_summary.lower()
         ]
 
-    return sorted(result, key=lambda claim: claim.updated_at)
+    if filters.sort == ClaimSortField.CLAIMANT_NAME:
+        return sorted(result, key=lambda claim: claim.claimant_name.lower())
+    if filters.sort == ClaimSortField.STATUS:
+        return sorted(result, key=lambda claim: claim.status)
+    if filters.sort == ClaimSortField.CONFIDENCE:
+        return sorted(result, key=lambda claim: claim.confidence, reverse=True)
+    return sorted(result, key=lambda claim: claim.updated_at, reverse=True)
 
 
-@app.get('/claims/stream')
+@app.get(CLAIMS_STREAM_ROUTE)
 async def stream_claims(
     request: Request,
     status: Annotated[ClaimStatus | None, Query(description='Filter by claim status')] = None,
