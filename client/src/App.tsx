@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Claim, ClaimFiltersApplied } from './types/claims';
 import { useClaimsQuery } from './hooks/useClaimsQuery';
@@ -9,6 +9,7 @@ import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { EmptyState } from './components/EmptyState';
 import { useDebounce } from './hooks/useDebounce';
+import { HighlightedClaimContext } from './hooks/useHighlightedClaim';
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ function ClaimsReviewContent() {
   });
   const [mergedClaims, setMergedClaims] = useState<Claim[]>([]);
   const [hasInitialBatch, setHasInitialBatch] = useState(false);
+  const [highlightedClaimId, setHighlightedClaimId] = useState<string | null>(null);
 
   // Reset SSE when filters change so new query data can flow in
   // until the new stream's initial_batch arrives.
@@ -60,10 +62,22 @@ function ClaimsReviewContent() {
       setMergedClaims(prev =>
         prev.map(claim => (claim.id === lastEvent.data.id ? lastEvent.data : claim))
       );
+      setHighlightedClaimId(lastEvent.data.id);
     }
   }, [lastEvent]);
 
+  useEffect(() => {
+    if (!highlightedClaimId) return;
+    const timer = setTimeout(() => setHighlightedClaimId(null), 1500);
+    return () => clearTimeout(timer);
+  }, [highlightedClaimId]);
+
   const hasExistingData = mergedClaims.length > 0;
+
+  const highlightedClaimContextValue = useMemo(
+    () => ({ highlightedClaimId }),
+    [highlightedClaimId]
+  );
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -123,7 +137,11 @@ function ClaimsReviewContent() {
 
             <div aria-live="polite" aria-atomic="true">
               {mergedClaims.length === 0 && !isLoading && !isError && <EmptyState />}
-              {mergedClaims.length > 0 && <ClaimsTable claims={mergedClaims} />}
+              {mergedClaims.length > 0 && (
+                <HighlightedClaimContext.Provider value={highlightedClaimContextValue}>
+                  <ClaimsTable claims={mergedClaims} />
+                </HighlightedClaimContext.Provider>
+              )}
             </div>
           </div>
         </div>

@@ -86,3 +86,13 @@ Cons:
 - Additional dependency (though lightweight)
 - Slight learning curve if not familiar
 - Might be overkill for very simple data fetching (but appropriate for this project)
+
+## Layered State Strategy
+
+The project uses a layered approach to state management:
+
+1. **TanStack Query** for all server state: claims data, loading, errors, and caching responses.
+2. **React `useState`** for local component state that does not need to be shared across the component tree.
+3. **React Context** for lightweight, shared UI state that would otherwise require prop drilling across intermediate components.
+
+This avoids introducing heavier global state libraries while keeping shared UI state accessible where needed.

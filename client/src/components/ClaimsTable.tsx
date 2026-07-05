@@ -2,11 +2,7 @@ import type { Claim } from '../types/claims';
 import { ClaimRow } from './ClaimRow';
 import { ClaimCard } from './ClaimCard';
 
-interface ClaimsTableProps {
-  claims: readonly Claim[];
-}
-
-export function ClaimsTable({ claims }: Readonly<ClaimsTableProps>) {
+export function ClaimsTable({ claims }: Readonly<{ claims: readonly Claim[] }>) {
   return (
     <div>
       <div className="hidden md:block overflow-x-auto" aria-label="Claims">

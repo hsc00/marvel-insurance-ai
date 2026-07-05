@@ -40,7 +40,7 @@
 
 1. Error/retry flows ✓
 2. Build verification ✓
-3. Row highlighting on update
+3. Row highlighting on update ✓
 
 ## Phase 4: Tests (30 min)
 
@@ -62,14 +62,13 @@
 
 ## Trade‑offs for Deadline
 
-The challenge was timeboxed as 4 hours so I wanted to show my ability to make trade-offs. There were stuff that I added even if it wasn't required because it was the minimum quality requirements for me (for example debouncing to avoid future prod env rate limiting and improve UI/UX performance issues) but mostly I tried to commit to make the development shipment as fast as possible as cut all the "red tape" I could.
+The challenge was timeboxed as 4 hours so I wanted to show my ability to make trade-offs without compromising product quality. There were stuff that I added even if it wasn't required because it was the minimum quality requirements for me (for example debouncing to improve UI/UX performance issues) but mostly I tried to commit to make the development shipment as fast as possible and cut all the "red tape" I could.
 
-- No table virtualization (could be used to improve performance)
+- No table virtualization (could be used to improve performance but in this case wouldn't add much)
 - No comprehensive test suite (just minimal tests to show capabilities)
 - No theming
-- No offline support (would be cool to implement cache but time constraints)
+- No offline support
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
 - Mandatory pre commit checks only for frontend (main focus of the challenge)
-- Connection state mapping as it didn't provide enough value to sustain keeping it for this small challenge
 - Known responsive DOM duplication (table + card layouts both render); responsive optimization was out of scope because the challenge rewards delivering a strong result quickly, not full optimization passes.

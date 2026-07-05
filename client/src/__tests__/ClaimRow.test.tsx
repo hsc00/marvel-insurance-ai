@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ClaimRow } from '../components/ClaimRow';
+import { HighlightedClaimContext } from '../hooks/useHighlightedClaim';
 import type { Claim } from '../types/claims';
 
 const claim: Claim = {
@@ -13,6 +14,14 @@ const claim: Claim = {
   agent_summary: 'Approved after review',
   confidence: 0.95,
 };
+
+function renderWithHighlight(claim: Claim, highlightedClaimId: string) {
+  return render(
+    <HighlightedClaimContext.Provider value={{ highlightedClaimId }}>
+      <ClaimRow claim={claim} />
+    </HighlightedClaimContext.Provider>
+  );
+}
 
 describe('ClaimRow', () => {
   it('renders claim id and agent summary', () => {
@@ -32,5 +41,19 @@ describe('ClaimRow', () => {
     render(<ClaimRow claim={claim} />);
 
     expect(screen.getByText('Approved')).toBeInTheDocument();
+  });
+
+  it('applies highlight class when the claim matches highlightedClaimId', () => {
+    renderWithHighlight(claim, '1');
+
+    const row = screen.getByText('CLM-2026-001').closest('tr');
+    expect(row).toHaveClass('bg-accent/10');
+  });
+
+  it('does not highlight row when the claim does not match highlightedClaimId', () => {
+    renderWithHighlight(claim, '2');
+
+    const row = screen.getByText('CLM-2026-001').closest('tr');
+    expect(row).not.toHaveClass('bg-accent/10');
   });
 });

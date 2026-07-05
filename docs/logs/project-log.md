@@ -263,3 +263,22 @@ Executed quality gates for both client and server.
 ### Outcome
 
 All quality gates green. No feature regressions. Backend lint fix committed.
+
+---
+
+## Row Highlighting on SSE Update — 2026-07-05
+
+Implemented a 1.5-second highlight for updated rows after `claim_update` events.
+
+### State Management Choice: React Context over Prop Drilling
+
+- Used a lightweight React Context (`HighlightedClaimContext`) to avoid prop drilling.
+- The feature is a good quick win because it introduces no new dependencies and keeps state logic centralized while allowing leaf components (`ClaimRow`) to consume it directly.
+- KISS: minimal code, fast implementation, no external state library required.
+
+### Changes
+
+- `client/src/App.tsx`: Added `highlightedClaimId` state; on `claim_update`, sets the ID and auto-clears after 1.5s via timeout.
+- `client/src/hooks/useHighlightedClaim.tsx`: New context and hook for highlighted claim state.
+- `client/src/components/ClaimRow.tsx`: Reads context internally; applies `bg-accent/10` with `transition-colors duration-500` when highlighted.
+- `client/src/__tests__/ClaimsTable.test.tsx`: Updated to render through context provider.

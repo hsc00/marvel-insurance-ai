@@ -102,6 +102,7 @@ Cons:
 - Less bidirectional than WebSockets (but not needed here)
 - Potential issues with proxy/firewall handling (but minimal for localhost)
 - Requires careful connection management for reconnection
+- HTTP/2 or HTTP/3 could mitigate connection limits and add multiplexing, but are outside this take-home's scope and would require server/proxy config changes instead of the current lightweight SSE path.
 
 ## Implementation Plan
 

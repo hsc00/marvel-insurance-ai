@@ -1,18 +1,21 @@
 import type { Claim } from '../types/claims';
 import { STATUS_CONFIG, formatDateTime } from '../utils/claimUtils';
+import { useHighlightedClaim } from '../hooks/useHighlightedClaim';
 
-interface ClaimRowProps {
-  claim: Readonly<Claim>;
-}
-
-export function ClaimRow({ claim }: Readonly<ClaimRowProps>) {
+export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
+  const { highlightedClaimId } = useHighlightedClaim();
+  const isHighlighted = highlightedClaimId === claim.id;
   const config = STATUS_CONFIG[claim.status] ?? {
     label: claim.status,
     classes: 'bg-gray-900/20 text-gray-300',
   };
 
   return (
-    <tr className="border-b border-border transition-colors hover:bg-white/5">
+    <tr
+      className={`border-b border-border transition-colors duration-500 ${
+        isHighlighted ? 'bg-accent/10' : 'hover:bg-white/5'
+      }`}
+    >
       <td className="px-4 py-3.5">
         <p className="text-sm font-medium text-gray-100 truncate" title={claim.agent_summary}>
           {claim.agent_summary}
