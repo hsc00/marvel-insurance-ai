@@ -17,32 +17,30 @@
 
 ## Phase 1: Foundations (completed)
 
-1. Add FastAPI Pydantic models for claims ✓
-2. Seed in-memory claim data ✓
-3. Implement GET /claims with filtering ✓
-4. Add validation + explicit error path (422) ✓
-5. Implement SSE /claims/stream endpoint ✓
-6. Configure CORS ✓
-7. Mirror TypeScript types in frontend ✓
+1. Add FastAPI Pydantic models for claims
+2. Seed in-memory claim data
+3. Implement GET /claims with filtering
+4. Add validation + explicit error path (422)
+5. Implement SSE /claims/stream endpoint
+6. Configure CORS
+7. Mirror TypeScript types in frontend
 
-## Phase 2: Frontend Core (in progress)
+## Phase 2: Frontend Core (completed)
 
-1. ClaimsTable component ✓
-2. ClaimRow component ✓
-3. FilterBar with status/priority/search ✓
-4. LoadingState, ErrorState, EmptyState ✓
-5. TanStack Query integration ✓
-6. SSE hook for real-time updates ✓
-7. Responsive layout basics ✓
-8. Accessibility: keyboard nav, focus states, ARIA ✓
+1. ClaimsTable component
+2. ClaimRow component
+3. FilterBar with status/priority/search
+4. LoadingState, ErrorState, EmptyState
+5. TanStack Query integration
+6. SSE hook for real-time updates
+7. Responsive layout basics
+8. Accessibility: keyboard nav, focus states, ARIA
 
 ## Phase 3: Polish & Real-time (45 min)
 
-1. SSE connection state handling
-2. Row highlighting on update
-3. Sorting UI
-4. Error/retry flows
-5. Build verification
+1. Error/retry flows ✓
+2. Build verification
+3. Row highlighting on update
 
 ## Phase 4: Tests (30 min)
 
@@ -64,11 +62,14 @@
 
 ## Trade‑offs for Deadline
 
+The challenge was timeboxed as 4 hours so I wanted to show my ability to make trade-offs. There were stuff that I added even if it wasn't required because it was the minimum quality requirements for me (for example debouncing to avoid future prod env rate limiting and improve UI/UX performance issues) but mostly I tried to commit to make the development shipment as fast as possible as cut all the "red tape" I could.
+
 - No table virtualization (could be used to improve performance)
 - No comprehensive test suite (just minimal tests to show capabilities)
 - No theming
-- No offline support
+- No offline support (would be cool to implement cache but time constraints)
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
 - Mandatory pre commit checks only for frontend (main focus of the challenge)
 - Connection state mapping as it didn't provide enough value to sustain keeping it for this small challenge
+- Known responsive DOM duplication (table + card layouts both render); responsive optimization was out of scope because the challenge rewards delivering a strong result quickly, not full optimization passes.

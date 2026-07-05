@@ -1,23 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { SSEClaimUpdateEvent, ClaimFiltersApplied } from '../types/claims';
 
 export function useClaimsSSE(filters: ClaimFiltersApplied) {
   const [lastEvent, setLastEvent] = useState<SSEClaimUpdateEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const retry = useCallback(() => {
+    setError(null);
+    setRetryCount(prev => prev + 1);
+  }, []);
 
   useEffect(() => {
-    setError(null);
-
     const params = new URLSearchParams();
-    if (filters.status) {
-      params.set('status', filters.status);
-    }
-    if (filters.priority) {
-      params.set('priority', filters.priority);
-    }
-    if (filters.search) {
-      params.set('search', filters.search);
-    }
+    if (filters.status) params.set('status', filters.status);
+    if (filters.priority) params.set('priority', filters.priority);
+    if (filters.search) params.set('search', filters.search);
 
     const url = `/claims/stream?${params.toString()}`;
     const eventSource = new EventSource(url);
@@ -27,8 +25,9 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
         const data = (event as MessageEvent<string>).data;
         const parsed = JSON.parse(data);
         setLastEvent({ type: 'initial_batch', data: parsed });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to parse initial batch');
+        setError(null);
+      } catch {
+        setError('Stream connection failed');
       }
     });
 
@@ -37,15 +36,16 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
         const data = (event as MessageEvent<string>).data;
         const parsed = JSON.parse(data);
         setLastEvent({ type: 'claim_update', data: parsed });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to parse claim update');
+        setError(null);
+      } catch {
+        setError('Stream connection failed');
       }
     });
 
     eventSource.addEventListener('error', (event: Event) => {
       const data = (event as MessageEvent<string>).data;
       if (!data) {
-        // Native EventSource connection error — let it auto-reconnect.
+        // Browser-level connection failure. Let EventSource auto-reconnect.
         return;
       }
 
@@ -65,7 +65,7 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
     return () => {
       eventSource.close();
     };
-  }, [filters.status, filters.priority, filters.search]);
+  }, [filters.status, filters.priority, filters.search, retryCount]);
 
-  return { lastEvent, error } as const;
+  return { lastEvent, error, retry } as const;
 }

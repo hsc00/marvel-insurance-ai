@@ -25,7 +25,11 @@ function ClaimsReviewContent() {
     ...filters,
     search: debouncedSearch,
   });
-  const { lastEvent, error: sseError } = useClaimsSSE({
+  const {
+    lastEvent,
+    error: sseError,
+    retry: sseRetry,
+  } = useClaimsSSE({
     ...filters,
     search: debouncedSearch,
   });
@@ -37,13 +41,6 @@ function ClaimsReviewContent() {
   useEffect(() => {
     setHasInitialBatch(false);
   }, [filters.status, filters.priority, debouncedSearch]);
-
-  // Keep SSE errors visible to developers without adding UI noise.
-  useEffect(() => {
-    if (sseError) {
-      console.error('[SSE] Stream error:', sseError);
-    }
-  }, [sseError]);
 
   // Sync with TanStack Query data when it changes, but only until
   // the SSE initial_batch arrives and takes precedence.
@@ -105,8 +102,27 @@ function ClaimsReviewContent() {
               </div>
             )}
 
+            {sseError && hasExistingData && (
+              <div
+                className="px-6 py-3 bg-red-900/10 border-t border-border"
+                role="alert"
+                aria-live="polite"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm text-red-400">{sseError}</p>
+                  <button
+                    onClick={sseRetry}
+                    className="inline-flex items-center px-3 py-1.5 bg-accent text-white text-sm font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all whitespace-nowrap"
+                    aria-label="Retry live stream connection"
+                  >
+                    Reconnect
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div aria-live="polite" aria-atomic="true">
-              {mergedClaims.length === 0 && <EmptyState />}
+              {mergedClaims.length === 0 && !isLoading && !isError && <EmptyState />}
               {mergedClaims.length > 0 && <ClaimsTable claims={mergedClaims} />}
             </div>
           </div>
