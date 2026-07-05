@@ -1,14 +1,11 @@
 import type { Claim } from '../types/claims';
-import { STATUS_CONFIG, formatDateTime } from '../utils/claimUtils';
+import { formatDateTime, getStatusConfig } from '../utils/claimUtils';
 import { useHighlightedClaim } from '../hooks/useHighlightedClaim';
 
 export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
   const { highlightedClaimId } = useHighlightedClaim();
   const isHighlighted = highlightedClaimId === claim.id;
-  const config = STATUS_CONFIG[claim.status] ?? {
-    label: claim.status,
-    classes: 'bg-gray-900/20 text-gray-300',
-  };
+  const config = getStatusConfig(claim.status);
 
   return (
     <tr

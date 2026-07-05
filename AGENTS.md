@@ -19,7 +19,7 @@ After completing implementation work:
 
 1. Update `docs/logs/project-log.md` immediately with factual changes
 2. Create or update ADRs in `docs/adr/` if architecture changes
-3. **Sync changes to both `.kilo/` (local workspace) and `.github/` (public record)**
+3. Sync changes to `.github/`
 4. Update VitePress sidebar if adding new ADRs or logs
 
 ## 3. Quality Standards
@@ -31,5 +31,4 @@ After completing implementation work:
 
 ## Location Rules
 
-- `.kilo/` = local workspace config (gitignored)
-- `.github/agents/` and `.github/skills/` = public record (published)
+- `.github/agents/` and `.github/skills/`

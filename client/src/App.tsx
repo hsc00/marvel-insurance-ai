@@ -93,7 +93,7 @@ function ClaimsReviewContent() {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-semibold tracking-tight text-gray-100">
                 Agent Workflows
-              </h1>{' '}
+              </h1>
             </div>
             <p className="text-sm text-gray-400">AI-powered claims review</p>
           </div>

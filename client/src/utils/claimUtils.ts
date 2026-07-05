@@ -5,6 +5,17 @@ export const STATUS_CONFIG = {
   denied: { label: 'Denied', classes: 'bg-red-900/20 text-red-300' },
 } as const;
 
+export type ClaimStatus = keyof typeof STATUS_CONFIG;
+
+export function getStatusConfig(status: string): { label: string; classes: string } {
+  return (
+    STATUS_CONFIG[status as ClaimStatus] ?? {
+      label: status,
+      classes: 'bg-gray-900/20 text-gray-300',
+    }
+  );
+}
+
 export function formatDateTime(dateString: string) {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) {

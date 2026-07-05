@@ -1,6 +1,15 @@
 import { useEffect, useCallback, useState } from 'react';
 import type { SSEClaimUpdateEvent, ClaimFiltersApplied } from '../types/claims';
 
+function parseSseEventData(event: Event) {
+  try {
+    const data = (event as MessageEvent<string>).data;
+    return JSON.parse(data);
+  } catch {
+    throw new Error('Stream connection failed');
+  }
+}
+
 export function useClaimsSSE(filters: ClaimFiltersApplied) {
   const [lastEvent, setLastEvent] = useState<SSEClaimUpdateEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,8 +31,7 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
 
     eventSource.addEventListener('initial_batch', (event: Event) => {
       try {
-        const data = (event as MessageEvent<string>).data;
-        const parsed = JSON.parse(data);
+        const parsed = parseSseEventData(event);
         setLastEvent({ type: 'initial_batch', data: parsed });
         setError(null);
       } catch {
@@ -33,8 +41,7 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
 
     eventSource.addEventListener('claim_update', (event: Event) => {
       try {
-        const data = (event as MessageEvent<string>).data;
-        const parsed = JSON.parse(data);
+        const parsed = parseSseEventData(event);
         setLastEvent({ type: 'claim_update', data: parsed });
         setError(null);
       } catch {
@@ -43,14 +50,14 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
     });
 
     eventSource.addEventListener('error', (event: Event) => {
-      const data = (event as MessageEvent<string>).data;
-      if (!data) {
+      const rawData = (event as MessageEvent<string>).data;
+      if (!rawData) {
         // Browser-level connection failure. Let EventSource auto-reconnect.
         return;
       }
 
       try {
-        const parsed = JSON.parse(data);
+        const parsed = JSON.parse(rawData);
         setError(
           (parsed as { detail?: string }).detail ||
             (parsed as { error?: string }).error ||

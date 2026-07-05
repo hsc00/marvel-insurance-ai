@@ -75,21 +75,21 @@ class TestGetClaimsEndpoint:
         response = ClaimsResponse(
             items=CLAIMS_DATA,
             total=len(CLAIMS_DATA),
-            filters=ClaimFiltersApplied(status=None, priority=None, search=None),
+            filters=ClaimFiltersApplied(),
         )
         assert response.total == 8
         assert len(response.items) == 8
 
     def test_filter_by_status(self) -> None:
         """Filtering by status should return only matching claims."""
-        filters = ClaimFiltersApplied(status=ClaimStatus.APPROVED, priority=None, search=None)
+        filters = ClaimFiltersApplied(status=ClaimStatus.APPROVED)
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 2
         assert all(c.status == ClaimStatus.APPROVED for c in filtered)
 
     def test_filter_by_priority(self) -> None:
         """Filtering by priority should return only matching claims."""
-        filters = ClaimFiltersApplied(status=None, priority=ClaimPriority.HIGH, search=None)
+        filters = ClaimFiltersApplied(priority=ClaimPriority.HIGH)
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 3
         assert all(c.priority == ClaimPriority.HIGH for c in filtered)
@@ -105,21 +105,21 @@ class TestGetClaimsEndpoint:
 
     def test_filter_by_search_claimant_name(self) -> None:
         """Search should match claimant_name field."""
-        filters = ClaimFiltersApplied(status=None, priority=None, search='alice')
+        filters = ClaimFiltersApplied(search='alice')
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 1
         assert filtered[0].claimant_name == 'Alice Johnson'
 
     def test_filter_by_search_claim_id(self) -> None:
         """Search should match claim_id field."""
-        filters = ClaimFiltersApplied(status=None, priority=None, search='CLM-2026-003')
+        filters = ClaimFiltersApplied(search='CLM-2026-003')
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 1
         assert filtered[0].claimant_name == 'Carol Davis'
 
     def test_filter_by_search_agent_summary(self) -> None:
         """Search should match agent_summary field."""
-        filters = ClaimFiltersApplied(status=None, priority=None, search='fraud')
+        filters = ClaimFiltersApplied(search='fraud')
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 1
         assert filtered[0].claimant_name == 'Frank Brown'
@@ -140,7 +140,6 @@ class TestGetClaimsEndpoint:
         filters = ClaimFiltersApplied(
             status=ClaimStatus.DENIED,
             priority=ClaimPriority.HIGH,
-            search=None,
         )
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 0

@@ -41,6 +41,7 @@
 1. Error/retry flows ✓
 2. Build verification ✓
 3. Row highlighting on update ✓
+4. Improve code readability ✓
 
 ## Phase 4: Tests (30 min)
 

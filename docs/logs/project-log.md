@@ -278,7 +278,43 @@ Implemented a 1.5-second highlight for updated rows after `claim_update` events.
 
 ### Changes
 
-- `client/src/App.tsx`: Added `highlightedClaimId` state; on `claim_update`, sets the ID and auto-clears after 1.5s via timeout.
+- `client/src/App.tsx`: Added `highlightedClaimId` state; on `claim_update`, sets the ID and auto-clears after 1.5s via timeout. Provider value memoized with `useMemo`.
 - `client/src/hooks/useHighlightedClaim.tsx`: New context and hook for highlighted claim state.
 - `client/src/components/ClaimRow.tsx`: Reads context internally; applies `bg-accent/10` with `transition-colors duration-500` when highlighted.
-- `client/src/__tests__/ClaimsTable.test.tsx`: Updated to render through context provider.
+- `client/src/__tests__/ClaimRow.test.tsx`: Added two highlight assertions rendered through context provider.
+
+---
+
+## Frontend Readability Pass — 2026-07-05
+
+Small readability cleanup across delegated frontend files. No behavior changes.
+
+### Files Touched
+
+- `client/src/App.tsx`
+- `client/src/components/ClaimRow.tsx`
+- `client/src/components/ClaimCard.tsx`
+- `client/src/hooks/useDebounce.ts`
+- `client/src/hooks/useClaimsSSE.ts`
+- `client/src/utils/claimUtils.ts`
+
+### Changes
+
+- Extracted `getStatusConfig()` helper in `claimUtils.ts` to deduplicate the inline fallback snippet that appeared in both `ClaimCard` and `ClaimRow`; replaced inline fallbacks with the helper.
+- Removed redundant `if (timerRef.current)` guards in `useDebounce.ts`; `clearTimeout` is safe with `undefined`.
+- Removed redundant `Readonly<...>` wrapper from `FilterBarProps` destructuring in `FilterBar.tsx`; props were already typed as readonly.
+- Extracted `parseSseEventData()` inside `useClaimsSSE.ts` to centralize `JSON.parse` + error handling that was duplicated across `initial_batch` and `claim_update` handlers.
+
+---
+
+## Backend Readability Pass — 2026-07-05
+
+Performed a fast, small readability cleanup across delegated server files.
+
+### Files Touched
+
+- `server/tests/test_claims.py`
+
+### Changes
+
+- Simplified several `ClaimFiltersApplied(...)` instantiations in `server/tests/test_claims.py` by omitting explicit default `None` values, reducing noise at call sites.
