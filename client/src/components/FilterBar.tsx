@@ -40,8 +40,8 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
   };
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
-      <div className="relative flex-1">
+    <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap px-4 py-3">
+      <div className="relative w-full sm:flex-1 min-w-0">
         <svg
           className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
           fill="none"
@@ -58,12 +58,12 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
           placeholder="Search claims..."
           value={filters.search || ''}
           onChange={handleSearchChange}
-          className="h-9 w-full rounded-lg border border-border bg-gray-800 pl-10 pr-3 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+          className="h-9 w-full rounded-lg border border-border bg-gray-800 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 pl-10 pr-3"
           aria-label="Search claims"
         />
       </div>
 
-      <div className="h-9 w-px bg-white/10" aria-hidden="true" />
+      <div className="h-px w-full sm:h-9 sm:w-px bg-white/10" aria-hidden="true" />
 
       <label htmlFor="status" className="sr-only">
         Status
@@ -73,7 +73,7 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
         name="status"
         value={filters.status || ''}
         onChange={handleStatusChange}
-        className="h-9 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        className="h-9 sm:w-40 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
         aria-label="Filter by status"
       >
         {STATUS_OPTIONS.map(option => (
@@ -88,7 +88,7 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
         name="priority"
         value={filters.priority || ''}
         onChange={handlePriorityChange}
-        className="h-9 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none  focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        className="h-9 sm:w-40 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
         aria-label="Filter by priority"
       >
         {PRIORITY_OPTIONS.map(option => (

@@ -110,3 +110,9 @@ Cons:
 3. Handle connection states in UI (connecting, connected, disconnected, error)
 4. Update UI components with real-time claim data
 5. Implement proper cleanup on component unmount
+
+## Follow-Up Notes
+
+- Frontend merges SSE updates with TanStack Query rather than replacing the cache; this preserves manual pagination/filter caching while reflecting live mutations.
+- Backend sends `retry:` millisecond headers so clients can back off after transport errors instead of hammering the endpoint.
+- Client-side retry is minimal: on error, the status indicator supports manual retry. Automatic EventSource reconnects remain bounded by `asyncio` task lifecycle in the hook.

@@ -38,13 +38,26 @@ describe('ClaimsTable', () => {
   it('renders rows for each claim', () => {
     render(<ClaimsTable claims={claims} />);
 
-    expect(screen.getByText('CLM-2026-001')).toBeInTheDocument();
-    expect(screen.getByText('CLM-2026-002')).toBeInTheDocument();
+    const table = document.querySelector('[aria-label="Claims"]');
+    expect(table).toHaveTextContent('CLM-2026-001');
+    expect(table).toHaveTextContent('CLM-2026-002');
   });
 
   it('renders empty table when no claims provided', () => {
     render(<ClaimsTable claims={[]} />);
 
-    expect(screen.queryByText('CLM-2026-001')).not.toBeInTheDocument();
+    const table = document.querySelector('[aria-label="Claims"]');
+    expect(table).toBeInTheDocument();
+    expect(table).not.toHaveTextContent('CLM-2026-001');
+  });
+
+  describe('mobile layout', () => {
+    it('renders cards on mobile viewports', () => {
+      render(<ClaimsTable claims={claims} />);
+
+      const cards = document.querySelector('[aria-label="Claims cards"]');
+      expect(cards).toHaveTextContent('CLM-2026-001');
+      expect(cards).toHaveTextContent('Approved');
+    });
   });
 });

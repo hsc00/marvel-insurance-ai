@@ -130,7 +130,7 @@ Guarded `event_generator()` in `server/main.py` with try/except blocks:
 - Initial batch event wrapped: emits `error` event on serialization failure
 - Loop body wrapped: emits `error` event on any processing error and returns gracefully
 - Added guard for empty `statuses` list when updating claim status (prevents `random.choice` on empty sequence)
-- Added periodic heartbeat comment `: heartbeat` every 5 seconds to prevent proxy/idle connection drops
+- Added periodic heartbeat comment `: heartbeat` every 3 seconds to prevent proxy/idle connection drops
 - Added `DEFAULT_RETRY_INTERVAL = 3000` (3 seconds)
 - Error events now include `retry:` field instructing SSE clients to wait before reconnecting
 - Follows SSE specification for automatic client reconnection behavior
@@ -199,3 +199,43 @@ Created `client/src/types/claims.ts` to mirror backend Pydantic models.
 - Keyboard focus rings via focus:outline-none focus:ring-2 focus:ring-accent
 - Role attributes on status/error/empty states for screen readers
 - sr-only labels for form inputs
+
+---
+
+## SSE Hook Integration and Real-Time Claims Updates — 2026-07-05
+
+### Files Created
+
+- `client/src/hooks/useClaimsSSE.ts` - Custom React hook for SSE real-time updates
+
+### Implementation Details
+
+`useClaimsSSE(filters)` connects to `/claims/stream` using the same query params as `fetchClaims`.
+
+**SSE Event Parsing:**
+
+- `initial_batch` - Parsed to full `ClaimsResponse`, sets `lastEvent`
+- `claim_update` - Parsed to `Claim`, sets `lastEvent`
+- `error` - Parsed to `ErrorResponse`, sets `error` message
+
+**Cleanup:** EventSource closed on unmount and when filters change.
+
+### App.tsx Changes
+
+- Applied SSE updates: `initial_batch` replaces claims, `claim_update` replaces matching claim by id (ignores if not found)
+- ClaimsTable now renders `mergedClaims` instead of raw `data.items`
+- Loading/error/empty states remain driven by TanStack Query
+
+### Scope Note
+
+The frontend SSE hook test was assessed against `docs/implementation-tasks.md`. The take-home explicitly limits the test scope to backend SSE contract coverage; frontend hook tests were therefore not retained to respect the documented minimal-test constraint.
+
+---
+
+## Responsive Layout Basics — 2026-07-05
+
+Implemented mobile card layout
+
+### Trade-off
+
+Implemented exactly 2 layout breakpoints (`<md` cards, `md+` table) instead of adding tablet-specific polishing (`sm`). This keeps the diff small while delivering a distinct mobile experience.

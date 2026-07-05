@@ -5,11 +5,7 @@ interface ErrorStateProps {
 
 export function ErrorState({ error, onRetry }: Readonly<ErrorStateProps>) {
   return (
-    <div
-      className="flex flex-col items-center justify-center py-16 px-4"
-      role="alert"
-      aria-live="polite"
-    >
+    <div className="flex flex-col items-center justify-center py-16 px-4" role="alert">
       <div
         className="w-12 h-12 rounded-full bg-red-900/20 flex items-center justify-center mb-4"
         aria-hidden="true"

@@ -4,6 +4,7 @@ import asyncio
 import os
 import random
 import json
+import logging
 from datetime import datetime, timezone
 from typing import Annotated
 
@@ -22,6 +23,8 @@ from src.models.claims import (
     ClaimStatus,
     ErrorResponse,
 )
+
+logging.basicConfig(level=logging.INFO)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -161,17 +164,18 @@ async def stream_claims(
                 filters=filters,
             )
             yield f"event: initial_batch\ndata: {json.dumps(initial_response.model_dump(mode='json'))}\n\n"
-        except Exception as e:
+        except Exception:
+            logging.exception("Failed to serialize initial batch for SSE stream")
             yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-            yield f"event: error\ndata: {json.dumps({'detail': 'Failed to serialize initial batch', 'error': str(e)})}\n\n"
+            yield f"event: error\ndata: {json.dumps({'detail': 'Failed to serialize initial batch'})}\n\n"
             return
 
         # Send periodic claim updates
         while not await request.is_disconnected():
             try:
-                await asyncio.sleep(5)
+                await asyncio.sleep(3)
 
-                # Send heartbeat comment to keep idle connections alive (proxies, load balancers)
+                # Send heartbeat comment to keep idle connections alive
                 yield ": heartbeat\n\n"
 
                 if not filtered_claims:
@@ -192,9 +196,10 @@ async def stream_claims(
                 )
 
                 yield f"event: claim_update\ndata: {json.dumps(filtered_claims[claim_index].model_dump(mode='json'))}\n\n"
-            except Exception as e:
+            except Exception:
+                logging.exception("Stream processing error in SSE event_generator")
                 yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-                yield f"event: error\ndata: {json.dumps({'detail': 'Stream processing error', 'error': str(e)})}\n\n"
+                yield f"event: error\ndata: {json.dumps({'detail': 'Stream processing error'})}\n\n"
                 return
 
     return StreamingResponse(

@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ClaimFiltersApplied } from './types/claims';
+import type { Claim, ClaimFiltersApplied } from './types/claims';
 import { useClaimsQuery } from './hooks/useClaimsQuery';
+import { useClaimsSSE } from './hooks/useClaimsSSE';
 import { ClaimsTable } from './components/ClaimsTable';
 import { FilterBar } from './components/FilterBar';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { EmptyState } from './components/EmptyState';
+import { useDebounce } from './hooks/useDebounce';
 
 const queryClient = new QueryClient();
 
@@ -17,11 +19,64 @@ function ClaimsReviewContent() {
     search: null,
   });
 
-  const { data, isLoading, isError, error, refetch } = useClaimsQuery(filters);
+  const debouncedSearch = useDebounce(filters.search, 300);
+
+  const { data, isLoading, isError, error, refetch } = useClaimsQuery({
+    ...filters,
+    search: debouncedSearch,
+  });
+  const { lastEvent, error: sseError } = useClaimsSSE({
+    ...filters,
+    search: debouncedSearch,
+  });
+  const [mergedClaims, setMergedClaims] = useState<Claim[]>([]);
+  const [hasInitialBatch, setHasInitialBatch] = useState(false);
+
+  // Reset SSE when filters change so new query data can flow in
+  // until the new stream's initial_batch arrives.
+  useEffect(() => {
+    setHasInitialBatch(false);
+  }, [filters.status, filters.priority, debouncedSearch]);
+
+  // Keep SSE errors visible to developers without adding UI noise.
+  useEffect(() => {
+    if (sseError) {
+      console.error('[SSE] Stream error:', sseError);
+    }
+  }, [sseError]);
+
+  // Sync with TanStack Query data when it changes, but only until
+  // the SSE initial_batch arrives and takes precedence.
+  useEffect(() => {
+    if (data?.items && !hasInitialBatch) {
+      setMergedClaims(data.items);
+    }
+  }, [data?.items, hasInitialBatch]);
+
+  // Apply SSE events.
+  useEffect(() => {
+    if (!lastEvent) return;
+    if (lastEvent.type === 'initial_batch') {
+      setHasInitialBatch(true);
+      setMergedClaims(lastEvent.data.items);
+    } else if (lastEvent.type === 'claim_update') {
+      setMergedClaims(prev =>
+        prev.map(claim => (claim.id === lastEvent.data.id ? lastEvent.data : claim))
+      );
+    }
+  }, [lastEvent]);
+
+  const hasExistingData = mergedClaims.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
+      <main className="mx-auto max-w-7xl px-4 py-8" id="main-content">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-3">
@@ -35,13 +90,13 @@ function ClaimsReviewContent() {
           <div className="rounded-xl border border-border bg-gray-900 shadow-sm">
             <FilterBar filters={filters} onFiltersChange={setFilters} />
 
-            {isLoading && (
+            {isLoading && !hasExistingData && (
               <div className="p-6" aria-busy="true" aria-live="polite">
                 <LoadingState />
               </div>
             )}
 
-            {isError && (
+            {isError && !hasExistingData && (
               <div className="p-6" role="alert" aria-live="assertive">
                 <ErrorState
                   error={error instanceof Error ? error : null}
@@ -50,14 +105,13 @@ function ClaimsReviewContent() {
               </div>
             )}
 
-            {!isLoading && !isError && data && data.items.length === 0 && <EmptyState />}
-
-            {!isLoading && !isError && data && data.items.length > 0 && (
-              <ClaimsTable claims={data.items} />
-            )}
+            <div aria-live="polite" aria-atomic="true">
+              {mergedClaims.length === 0 && <EmptyState />}
+              {mergedClaims.length > 0 && <ClaimsTable claims={mergedClaims} />}
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

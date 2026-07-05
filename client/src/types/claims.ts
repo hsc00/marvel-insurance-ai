@@ -46,5 +46,3 @@ export type SSEClaimUpdateEvent =
       type: 'error';
       data: ErrorResponse;
     };
-
-export type ConnectionState = 'connecting' | 'connected' | 'disconnected' | 'error';

@@ -32,8 +32,8 @@
 3. FilterBar with status/priority/search ✓
 4. LoadingState, ErrorState, EmptyState ✓
 5. TanStack Query integration ✓
-6. SSE hook for real-time updates
-7. Responsive layout basics
+6. SSE hook for real-time updates ✓
+7. Responsive layout basics ✓
 8. Accessibility: keyboard nav, focus states, ARIA ✓
 
 ## Phase 3: Polish & Real-time (45 min)
@@ -62,7 +62,7 @@
 6. Document what to build next
 7. Update ADRs for any new decisions made during implementation
 
-## Sacrifices for Deadline
+## Trade‑offs for Deadline
 
 - No table virtualization (could be used to improve performance)
 - No comprehensive test suite (just minimal tests to show capabilities)
@@ -71,4 +71,4 @@
 - Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
 - Mandatory pre commit checks only for frontend (main focus of the challenge)
-- No debounce on search input (rapid typing currently fires one request per keystroke)
+- Connection state mapping as it didn't provide enough value to sustain keeping it for this small challenge
