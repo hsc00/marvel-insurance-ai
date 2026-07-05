@@ -25,5 +25,6 @@ fi
 if [ "$server_changed" -eq 1 ]; then
   cd "$REPO_ROOT/server" || exit 1
   poetry run ruff check .
+  poetry run ruff format .
   poetry run pytest
 fi
