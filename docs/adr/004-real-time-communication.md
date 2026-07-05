@@ -116,4 +116,6 @@ Cons:
 
 - Frontend merges SSE updates with TanStack Query rather than replacing the cache; this preserves manual pagination/filter caching while reflecting live mutations.
 - Backend sends `retry:` millisecond headers so clients can back off after transport errors instead of hammering the endpoint.
+- Backend emits a periodic heartbeat comment (`: heartbeat`) every 3 seconds to prevent proxy/idle connection drops.
+- Initial SSE batch (`initial_batch`) replaces the TanStack Query cache with the full claims payload; subsequent `claim_update` events replace the matching claim by id.
 - Client-side retry is minimal: on error, the status indicator supports manual retry. Automatic EventSource reconnects remain bounded by `asyncio` task lifecycle in the hook.

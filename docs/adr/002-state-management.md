@@ -96,3 +96,14 @@ The project uses a layered approach to state management:
 3. **React Context** for lightweight, shared UI state that would otherwise require prop drilling across intermediate components.
 
 This avoids introducing heavier global state libraries while keeping shared UI state accessible where needed.
+
+### Orchestration Layer
+
+`client/src/hooks/useClaimsViewModel.ts` sits between TanStack Query and components. It owns:
+
+- Filter state and debounced search
+- Composition of `useClaimsQuery` and `useClaimsSSE`
+- SSE + REST merge logic, row highlighting timer, and filter-dependent visibility
+- Sort derivation via `useMemo`
+
+This keeps components view-only and centralizes data rules outside JSX.

@@ -2,15 +2,16 @@
 
 Real-time claims review UI project.
 
-## Repository Process
+## Repository Structure
 
-- Architecture decisions live in `docs/adr`.
-- Project logs live in `docs/logs` and are updated immediately after meaningful work.
-- Frontend app lives in `client`.
-- Backend API lives in `server`.
-- Documentation site is powered by VitePress from `docs`.
+- `client/` — Vite + React + TypeScript frontend
+- `server/` — FastAPI + Pydantic Python backend
+- `docs/` — VitePress documentation site
+- `.github/agents/` and `.github/skills/` — Kilo orchestration configuration
 
 ## Documentation
+
+Detailed decisions, state management rationale, data contract notes, real-time notes, skipped features, and future roadmap live in `docs/app-overview.md`. Architecture decisions are recorded in `docs/adr/`.
 
 ```bash
 cd docs
@@ -18,48 +19,45 @@ npm install
 npm run dev
 ```
 
-## Current Stack
+## Quick Start
 
-- Frontend: Vite, React, TypeScript, TanStack Query, Tailwind CSS.
-- Backend: Python, FastAPI, Pydantic.
-- Real-time: Server-Sent Events.
-- Docs: VitePress static site generation.
-- Quality: fast pre commit and code analysis extensions checks.
+### Prerequisites
 
-## Backend Quick Start (Poetry)
+- Node.js >= 18
+- Python >= 3.10
+- Poetry
 
-Dependencies are managed with Poetry. A `poetry.lock` is committed so the environment is reproducible.
+### Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Frontend API calls are proxied to the backend via Vite dev server (`client/vite.config.ts`). No env file is required for local development.
+
+### Backend
 
 ```bash
 cd server
-poetry install          # installs deps into managed virtualenv
-poetry run pytest       # run backend tests
+poetry install
+cp .env.example .env   # optional; CORS values are centralized in repo root .env
+poetry run uvicorn main:app --reload --port 8000
 ```
 
-Start the backend:
-
-**macOS / Linux**:
+### Docs
 
 ```bash
-cd server && poetry run uvicorn main:app --reload --port 8000
+cd docs
+npm install
+npm run dev
 ```
-
-**Windows**:
-
-```bash
-cd server ; poetry run uvicorn main:app --reload --port 8000
-```
-
-For optional development commands:
-
-- Backend linting: `poetry run ruff check src && poetry run ruff format src --check`
-- Backend typecheck: handled by Pydantic at runtime.
 
 ## Quality Guardrails
 
-- Frontend pre-commit: Husky + lint-staged runs `lint` and `typecheck` on staged `*.{ts,tsx}` files.
 - Frontend checks: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`
-- Backend checks: `poetry run pytest` in `server/`
-- Advisory: SonarQube and CodeRabbit only as local extensions to keep development more agile during commits.
+- Backend checks: `poetry run ruff check .`, `poetry run ruff format .`, `poetry run pytest` in `server/`
+- Code Reviews: SonarQube and CodeRabbit only as local extensions to keep development more agile during commits.
 
 See `docs/adr/010-pr-guardrails.md` for the rationale.
