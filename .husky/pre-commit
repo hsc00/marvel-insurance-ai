@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -e
 
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
 # Determine which parts of the repo are affected by staged changes.
 client_changed=0
 server_changed=0
@@ -14,14 +16,14 @@ if git diff --cached --name-only | grep -qE '^server/'; then
 fi
 
 if [ "$client_changed" -eq 1 ]; then
-  cd client || exit 1
+  cd "$REPO_ROOT/client" || exit 1
   npx lint-staged
   npm run typecheck
   npm run test -- --run
 fi
 
 if [ "$server_changed" -eq 1 ]; then
-  cd server || exit 1
+  cd "$REPO_ROOT/server" || exit 1
   poetry run ruff check .
   poetry run pytest
 fi
