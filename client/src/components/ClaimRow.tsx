@@ -17,7 +17,7 @@ export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
         <p className="text-sm font-medium text-gray-100 truncate" title={claim.agent_summary}>
           {claim.agent_summary}
         </p>
-        <p className="text-xs text-gray-500 truncate" title={claim.claim_id}>
+        <p className="text-xs text-gray-400 truncate" title={claim.claim_id}>
           {claim.claim_id}
         </p>
       </td>

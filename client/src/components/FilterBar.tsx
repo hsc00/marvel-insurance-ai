@@ -32,7 +32,7 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
     <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap px-4 py-3">
       <div className="relative w-full sm:flex-1 min-w-0">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -47,7 +47,7 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
           placeholder="Search claims..."
           value={filters.search || ''}
           onChange={handleSearchChange}
-          className="h-9 w-full rounded-lg border border-border bg-gray-800 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 pl-10 pr-3"
+          className="h-9 w-full rounded-lg border border-border bg-gray-800 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 pl-10 pr-3"
           aria-label="Search claims"
         />
       </div>

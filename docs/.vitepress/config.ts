@@ -70,6 +70,7 @@ export default defineConfig({
           { text: "SSE and Realtime", link: "/logs/sse-and-realtime" },
           { text: "Frontend UI Core", link: "/logs/frontend-ui" },
           { text: "Frontend Refactors", link: "/logs/frontend-refactors" },
+          { text: "Lighthouse Audit", link: "/logs/lighthouse-audit" },
         ],
       },
     ],
