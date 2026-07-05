@@ -6,7 +6,7 @@ This project is a challenge, but should be inheritable by teammates. We need exp
 
 ## Decision
 
-- Docs and ADR Engineer agent updates `docs/logs/project-log.md` immediately after agents complete work.
+- Docs and ADR Engineer agent updates the relevant log file under `docs/logs/` immediately after agents complete work.
 - Agents do not expand beyond their delegated scope.
 - ADRs are created/updated in `docs/adr/`.
 - PRs require tier-1 checks (typecheck, lint, tests, build) and tier-2 extensions ( CodeRabbit and SonarQube).

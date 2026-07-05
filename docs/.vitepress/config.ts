@@ -8,7 +8,6 @@ export default defineConfig({
     nav: [
       { text: "Guide", link: "/" },
       { text: "ADRs", link: "/adr/000-summary" },
-      { text: "Log", link: "/logs/project-log" },
     ],
     sidebar: [
       {
@@ -57,14 +56,21 @@ export default defineConfig({
             link: "/adr/012-performance-reliability-standards",
           },
           {
-            text: "013 - TypeScript Union Types for Enums",
-            link: "/adr/013-typescript-union-types-for-enums",
+            text: "013 - React Error Boundary",
+            link: "/adr/013-react-error-boundary",
           },
         ],
       },
       {
         text: "Project",
-        items: [{ text: "Project Log", link: "/logs/project-log" }],
+        items: [
+          { text: "Scaffold and Setup", link: "/logs/scaffold-and-setup" },
+          { text: "Backend Foundations", link: "/logs/backend-foundations" },
+          { text: "Backend Tooling", link: "/logs/backend-tooling" },
+          { text: "SSE and Realtime", link: "/logs/sse-and-realtime" },
+          { text: "Frontend UI Core", link: "/logs/frontend-ui" },
+          { text: "Frontend Refactors", link: "/logs/frontend-refactors" },
+        ],
       },
     ],
   },

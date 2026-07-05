@@ -12,5 +12,4 @@ This documentation site captures the architecture decisions, implementation plan
 ## Main Sections
 
 - [Implementation Tasks](/implementation-tasks)
-- [Architecture Decision Summary](/adr/000-summary)
-- [Project Log](./logs/project-log)
+ - [Architecture Decision Summary](/adr/000-summary)
