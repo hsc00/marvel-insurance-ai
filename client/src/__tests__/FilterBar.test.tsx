@@ -60,17 +60,12 @@ describe('FilterBar', () => {
     });
   });
 
-  it('calls onFiltersChange with null sort when default option selected', () => {
-    const onChange = vi.fn();
-    render(<FilterBar filters={baseFilters} onFiltersChange={onChange} />);
+  it('uses date as the visible default sort option', () => {
+    render(<FilterBar filters={baseFilters} onFiltersChange={() => {}} />);
 
-    fireEvent.change(screen.getByLabelText('Sort claims'), {
-      target: { value: '' },
-    });
+    const sortSelect = screen.getByLabelText('Sort claims');
 
-    expect(onChange).toHaveBeenCalledWith({
-      ...baseFilters,
-      sort: null,
-    });
+    expect(sortSelect).toHaveValue('updated_at');
+    expect(screen.queryByRole('option', { name: 'Sort: Default' })).not.toBeInTheDocument();
   });
 });

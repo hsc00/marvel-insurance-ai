@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { ReactNode } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { BoundaryFallback } from '../components/BoundaryFallback';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 
@@ -18,17 +18,25 @@ describe('BoundaryFallback', () => {
     expect(
       screen.getByText(/The claims review interface ran into an unexpected problem/)
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Try again/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Try again/i }));
+
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('ErrorBoundary', () => {
   it('renders default fallback when a child throws during render', () => {
-    render(
-      <ErrorBoundary>
-        <Broken />
-      </ErrorBoundary>
-    );
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    try {
+      render(
+        <ErrorBoundary>
+          <Broken />
+        </ErrorBoundary>
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
 
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     expect(

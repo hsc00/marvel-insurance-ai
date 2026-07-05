@@ -6,7 +6,7 @@ Created `client/src/types/claims.ts` to mirror backend Pydantic models. Enums be
 
 ## Components
 
-Built responsive claims table with `ClaimCard` (mobile) and `ClaimRow` (desktop) layouts. `FilterBar` provides status and search filters plus sort selection. `LoadingState`, `ErrorState`, and `EmptyState` handle all data-view states with proper ARIA roles and keyboard focus rings.
+Built responsive claims table with `ClaimCard` (mobile) and `ClaimRow` (desktop) layouts. `FilterBar` provides status and search filters plus sort selection, with Date (`updated_at`) exposed as the visible default. `LoadingState`, `ErrorState`, and `EmptyState` handle all data-view states with proper ARIA roles and keyboard focus rings.
 
 ## Real-time and Highlights
 

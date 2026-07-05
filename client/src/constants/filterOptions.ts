@@ -7,7 +7,6 @@ export const STATUS_OPTIONS = [
 ] as const;
 
 export const SORT_OPTIONS = [
-  { value: '', label: 'Sort: Default' },
   { value: 'updated_at', label: 'Sort: Date' },
   { value: 'confidence', label: 'Sort: Confidence' },
   { value: 'claimant_name', label: 'Sort: Name' },

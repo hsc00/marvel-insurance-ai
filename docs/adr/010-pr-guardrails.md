@@ -7,7 +7,7 @@ We want quality guardrails without slowing startup velocity. Backend enforcement
 ## Decision
 
 - **Client-side pre-commit hook:** Husky + lint-staged for lint and typecheck on staged TS/TSX files.
-- **Blocking checks in pipeline:** `tsc --noEmit`, `eslint`, `vitest run`, `npm run build`
+- **Blocking checks in pipeline:** `tsc --noEmit`, `oxlint`, `vitest run`, `npm run build`
 - **Code Reviews checks:** SonarCloud quality signals, CodeRabbit review
 - **Backend enforcement:** Pre-commit runs `ruff check .`, `ruff format .`, and `pytest` whenever `server/` files are staged.
 

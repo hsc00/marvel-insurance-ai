@@ -67,6 +67,7 @@ SSE lifecycle:
 - **Priority filter removed from UI** — Replaced with a Sort control to reduce control density. Priority can be reintroduced easily in the future.
 - **Runtime contract validation in the frontend** — Would catch backend contract drift at runtime, but types already mirror Pydantic closely and adding Zod would have been overengineering for this take-home.
 - **Responsive DOM duplication** — Both `<table>` (md+) and card layout (<md) render; in a production app we would conditionally render one, but the take-home rewards shipping a strong result quickly.
+- **Architecture diagram** - cool to be part of documentation as it is a visual representation of how components, client and server interact but for this challenge would be over engineering too.
 
 ## What to Build Next
 
