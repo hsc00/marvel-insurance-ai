@@ -4,14 +4,17 @@
   --color-border: rgba(255, 255, 255, 0.08);
   --color-accent: #2563eb;
   --color-gray-25: #0a0a0a;
+  --color-canvas: #0a0a0a;
+  --color-canvas-text: #f3f4f6;
+  --color-body-line-height: 1.45;
 }
 
 @layer base {
   :root {
     font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.45;
-    color: #f3f4f6;
-    background: #0a0a0a;
+    line-height: var(--color-body-line-height);
+    color: var(--color-canvas-text);
+    background: var(--color-canvas);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

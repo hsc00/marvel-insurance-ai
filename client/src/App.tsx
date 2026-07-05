@@ -13,6 +13,9 @@ import { HighlightedClaimContext } from './hooks/useHighlightedClaim';
 
 const queryClient = new QueryClient();
 
+const SEARCH_DEBOUNCE_MS = 300;
+const HIGHLIGHT_TIMEOUT_MS = 1500;
+
 function ClaimsReviewContent() {
   const [filters, setFilters] = useState<ClaimFiltersApplied>({
     status: null,
@@ -20,7 +23,7 @@ function ClaimsReviewContent() {
     search: null,
   });
 
-  const debouncedSearch = useDebounce(filters.search, 300);
+  const debouncedSearch = useDebounce(filters.search, SEARCH_DEBOUNCE_MS);
 
   const { data, isLoading, isError, error, refetch } = useClaimsQuery({
     ...filters,
@@ -68,7 +71,7 @@ function ClaimsReviewContent() {
 
   useEffect(() => {
     if (!highlightedClaimId) return;
-    const timer = setTimeout(() => setHighlightedClaimId(null), 1500);
+    const timer = setTimeout(() => setHighlightedClaimId(null), HIGHLIGHT_TIMEOUT_MS);
     return () => clearTimeout(timer);
   }, [highlightedClaimId]);
 

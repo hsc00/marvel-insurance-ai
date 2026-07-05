@@ -55,11 +55,13 @@ AGENT_SUMMARIES = [
 ]
 
 DEFAULT_RETRY_INTERVAL = 3000
+STREAM_UPDATE_INTERVAL_SECONDS = 3
+UPDATE_TYPES = ('confidence', 'status', 'agent_summary')
 
 
 def update_claim(claim: Claim) -> Claim | None:
     """Randomly update a claim's confidence, status, or agent summary."""
-    update_type = random.choice(['confidence', 'status', 'agent_summary'])
+    update_type = random.choice(UPDATE_TYPES)
 
     if update_type == 'confidence':
         new_confidence = round(random.uniform(0.0, 1.0), 2)
@@ -177,7 +179,7 @@ async def stream_claims(
         # Send periodic claim updates
         while not await request.is_disconnected():
             try:
-                await asyncio.sleep(3)
+                await asyncio.sleep(STREAM_UPDATE_INTERVAL_SECONDS)
 
                 # Send heartbeat comment to keep idle connections alive
                 yield ": heartbeat\n\n"

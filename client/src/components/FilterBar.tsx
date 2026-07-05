@@ -1,24 +1,10 @@
 import type { ClaimFiltersApplied } from '../types/claims';
+import { STATUS_OPTIONS, PRIORITY_OPTIONS } from '../constants/filterOptions';
 
 interface FilterBarProps {
   readonly filters: ClaimFiltersApplied;
   readonly onFiltersChange: (filters: ClaimFiltersApplied) => void;
 }
-
-const STATUS_OPTIONS = [
-  { value: '', label: 'All Statuses' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'in_review', label: 'In Review' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'denied', label: 'Denied' },
-] as const;
-
-const PRIORITY_OPTIONS = [
-  { value: '', label: 'All Priorities' },
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
-] as const;
 
 export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>) {
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
