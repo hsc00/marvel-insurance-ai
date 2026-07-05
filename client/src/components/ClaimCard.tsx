@@ -29,6 +29,7 @@ export function ClaimCard({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
           </p>
         </div>
         <span
+          aria-label={`Status: ${config.label}`}
           className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${config.classes}`}
         >
           {config.label}

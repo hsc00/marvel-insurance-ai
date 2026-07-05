@@ -5,8 +5,9 @@ import { ClaimCard } from './ClaimCard';
 export function ClaimsTable({ claims }: Readonly<{ claims: readonly Claim[] }>) {
   return (
     <div>
-      <div className="hidden md:block overflow-x-auto" aria-label="Claims">
-        <table className="w-full table-fixed">
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full table-fixed" aria-label="Claims">
+          <caption className="sr-only">Claims review activity</caption>
           <colgroup>
             <col className="w-[40%]" />
             <col className="w-[18%]" />

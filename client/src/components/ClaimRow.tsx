@@ -24,6 +24,7 @@ export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
       <td className="px-4 py-3.5 text-sm text-gray-300">{claim.claimant_name}</td>
       <td className="px-4 py-3.5">
         <span
+          aria-label={`Status: ${statusConfig.label}`}
           className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusConfig.classes}`}
         >
           {statusConfig.label}
