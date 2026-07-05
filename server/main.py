@@ -1,10 +1,10 @@
 """MarvelX Claims Review API server."""
 
 import asyncio
-import os
-import random
 import json
 import logging
+import os
+import random
 from datetime import datetime, timezone
 from typing import Annotated
 
@@ -163,11 +163,15 @@ async def stream_claims(
                 total=len(filtered_claims),
                 filters=filters,
             )
-            yield f"event: initial_batch\ndata: {json.dumps(initial_response.model_dump(mode='json'))}\n\n"
+            initial_payload = initial_response.model_dump_json()
+            yield f"event: initial_batch\ndata: {initial_payload}\n\n"
         except Exception:
             logging.exception("Failed to serialize initial batch for SSE stream")
             yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-            yield f"event: error\ndata: {json.dumps({'detail': 'Failed to serialize initial batch'})}\n\n"
+            error_payload = json.dumps(
+                {'detail': 'Failed to serialize initial batch'}
+            )
+            yield f"event: error\ndata: {error_payload}\n\n"
             return
 
         # Send periodic claim updates
@@ -195,11 +199,15 @@ async def stream_claims(
                     update={'updated_at': datetime.now(timezone.utc)}
                 )
 
-                yield f"event: claim_update\ndata: {json.dumps(filtered_claims[claim_index].model_dump(mode='json'))}\n\n"
+                update_payload = filtered_claims[claim_index].model_dump_json()
+                yield f"event: claim_update\ndata: {update_payload}\n\n"
             except Exception:
                 logging.exception("Stream processing error in SSE event_generator")
                 yield f"retry: {DEFAULT_RETRY_INTERVAL}\n"
-                yield f"event: error\ndata: {json.dumps({'detail': 'Stream processing error'})}\n\n"
+                stream_error_payload = json.dumps(
+                    {'detail': 'Stream processing error'}
+                )
+                yield f"event: error\ndata: {stream_error_payload}\n\n"
                 return
 
     return StreamingResponse(

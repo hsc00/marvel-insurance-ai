@@ -39,7 +39,7 @@
 ## Phase 3: Polish & Real-time (45 min)
 
 1. Error/retry flows ✓
-2. Build verification
+2. Build verification ✓
 3. Row highlighting on update
 
 ## Phase 4: Tests (30 min)

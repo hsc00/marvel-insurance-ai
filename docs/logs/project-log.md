@@ -239,3 +239,27 @@ Implemented mobile card layout
 ### Trade-off
 
 Implemented exactly 2 layout breakpoints (`<md` cards, `md+` table) instead of adding tablet-specific polishing (`sm`). This keeps the diff small while delivering a distinct mobile experience.
+
+---
+
+## Build Verification — 2026-07-05
+
+Executed quality gates for both client and server.
+
+### Frontend
+
+- `npm run typecheck` — passed
+- `npm run lint` — passed
+- `npm run build` — passed (289 ms)
+- `npm run test -- --run` — 19 tests passed across 5 test files
+
+### Backend
+
+- `poetry run ruff check .` — passed after resolving 4 issues:
+  - 1 unsorted import block
+  - 3 lines exceeding 100-char limit in `server/main.py` SSE event generator
+- `poetry run pytest` — 13 tests passed
+
+### Outcome
+
+All quality gates green. No feature regressions. Backend lint fix committed.
