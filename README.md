@@ -35,14 +35,14 @@ npm install
 npm run dev
 ```
 
-Frontend API calls are proxied to the backend via Vite dev server (`client/vite.config.ts`). No env file is required for local development.
+Frontend API calls are proxied to the backend via Vite dev server (`client/vite.config.ts`). Copy `client/.env.example` to `client/.env` to override the backend URL.
 
 ### Backend
 
 ```bash
 cd server
 poetry install
-cp .env.example .env   # optional; CORS values are centralized in repo root .env
+cp server/.env.example server/.env   # optional; CORS values centralized in server/.env
 poetry run uvicorn main:app --reload --port 8000
 ```
 
