@@ -1,6 +1,27 @@
 #!/usr/bin/env sh
-cd client || exit 1
+set -e
 
-npx lint-staged
-npm run typecheck
-npm run test -- --run --passWithNoTests
+# Determine which parts of the repo are affected by staged changes.
+client_changed=0
+server_changed=0
+
+if git diff --cached --name-only | grep -qE '^client/'; then
+  client_changed=1
+fi
+
+if git diff --cached --name-only | grep -qE '^server/'; then
+  server_changed=1
+fi
+
+if [ "$client_changed" -eq 1 ]; then
+  cd client || exit 1
+  npx lint-staged
+  npm run typecheck
+  npm run test -- --run
+fi
+
+if [ "$server_changed" -eq 1 ]; then
+  cd server || exit 1
+  poetry run ruff check .
+  poetry run pytest
+fi

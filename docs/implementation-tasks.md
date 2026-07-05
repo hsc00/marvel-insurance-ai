@@ -36,20 +36,21 @@
 7. Responsive layout basics
 8. Accessibility: keyboard nav, focus states, ARIA
 
-## Phase 3: Polish & Real-time (45 min)
+## Phase 3: Polish & Real-time (completed)
 
-1. Error/retry flows ✓
-2. Build verification ✓
-3. Row highlighting on update ✓
-4. Improve code readability ✓
+1. Error/retry flows
+2. Build verification
+3. Row highlighting on update
+4. Improve code readability
 
-## Phase 4: Tests (30 min)
+## Phase 4: Tests (completed)
 
-1. Backend: valid filter returns 200
-2. Backend: invalid filter returns 400/422
-3. Backend: SSE endpoint streams events
-4. Frontend: loading/error/empty states render
-5. Frontend: filter interaction updates query
+1. Backend: valid filter logic returns matching claims
+2. Backend: invalid filter values rejected via Pydantic validation
+3. Backend: SSE stream behavior validated at unit level
+4. Backend: Unicode claimant names filter/search correctly
+5. Frontend: loading/error/empty states render
+6. Frontend: filter interaction updates query
 
 ## Phase 5: Documentation (45 min)
 
@@ -69,7 +70,6 @@ The challenge was timeboxed as 4 hours so I wanted to show my ability to make tr
 - No comprehensive test suite (just minimal tests to show capabilities)
 - No theming
 - No offline support
-- Minimal responsive polish
 - No CI/CD pipeline (Only local checks)
-- Mandatory pre commit checks only for frontend (main focus of the challenge)
+- Minimal backend tests (no TestClient; kept minimal as it's not the focus)
 - Known responsive DOM duplication (table + card layouts both render); responsive optimization was out of scope because the challenge rewards delivering a strong result quickly, not full optimization passes.

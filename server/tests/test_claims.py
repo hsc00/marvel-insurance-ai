@@ -77,8 +77,8 @@ class TestGetClaimsEndpoint:
             total=len(CLAIMS_DATA),
             filters=ClaimFiltersApplied(),
         )
-        assert response.total == 8
-        assert len(response.items) == 8
+        assert response.total == len(CLAIMS_DATA)
+        assert len(response.items) == len(CLAIMS_DATA)
 
     def test_filter_by_status(self) -> None:
         """Filtering by status should return only matching claims."""
