@@ -9,13 +9,13 @@ export function useClaimsQuery(filters: ClaimFiltersApplied) {
   return useQuery({
     queryKey: [
       'claims',
-      { status: filters.status, priority: filters.priority, search: filters.search },
+      { status: filters.status, search: filters.search, sort: filters.sort },
     ] as const,
     queryFn: ({ signal }) =>
       fetchClaims({
         status: filters.status,
-        priority: filters.priority,
         search: filters.search,
+        sort: filters.sort,
         signal,
       }),
     staleTime: STALE_TIME_MS,

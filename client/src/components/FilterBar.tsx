@@ -1,10 +1,13 @@
 import type { ClaimFiltersApplied } from '../types/claims';
-import { STATUS_OPTIONS, PRIORITY_OPTIONS } from '../constants/filterOptions';
+import { STATUS_OPTIONS, SORT_OPTIONS } from '../constants/filterOptions';
 
 interface FilterBarProps {
   readonly filters: ClaimFiltersApplied;
   readonly onFiltersChange: (filters: ClaimFiltersApplied) => void;
 }
+
+const FILTER_SELECT_CLASSES =
+  'h-9 sm:w-40 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2';
 
 export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>) {
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -14,10 +17,10 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
     });
   };
 
-  const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFiltersChange({
       ...filters,
-      priority: (e.target.value === '' ? null : e.target.value) as ClaimFiltersApplied['priority'],
+      sort: (e.target.value === '' ? null : e.target.value) as ClaimFiltersApplied['sort'],
     });
   };
 
@@ -59,7 +62,7 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
         name="status"
         value={filters.status || ''}
         onChange={handleStatusChange}
-        className="h-9 sm:w-40 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+        className={FILTER_SELECT_CLASSES}
         aria-label="Filter by status"
       >
         {STATUS_OPTIONS.map(option => (
@@ -70,14 +73,14 @@ export function FilterBar({ filters, onFiltersChange }: Readonly<FilterBarProps>
       </select>
 
       <select
-        id="priority"
-        name="priority"
-        value={filters.priority || ''}
-        onChange={handlePriorityChange}
-        className="h-9 sm:w-40 appearance-none rounded-lg border border-border bg-gray-800 pl-3 pr-8 text-sm text-gray-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-        aria-label="Filter by priority"
+        id="sort"
+        name="sort"
+        value={filters.sort || ''}
+        onChange={handleSortChange}
+        className={FILTER_SELECT_CLASSES}
+        aria-label="Sort claims"
       >
-        {PRIORITY_OPTIONS.map(option => (
+        {SORT_OPTIONS.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

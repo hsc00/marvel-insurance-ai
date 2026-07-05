@@ -1,13 +1,12 @@
 export type ClaimStatus = 'pending' | 'in_review' | 'approved' | 'denied';
 
-export type ClaimPriority = 'low' | 'medium' | 'high';
+export type ClaimSortField = 'updated_at' | 'confidence' | 'claimant_name' | 'status';
 
 export interface Claim {
   id: string;
   claim_id: string;
   claimant_name: string;
   status: ClaimStatus;
-  priority: ClaimPriority;
   updated_at: string;
   agent_summary: string;
   confidence: number;
@@ -15,8 +14,8 @@ export interface Claim {
 
 export interface ClaimFiltersApplied {
   status: ClaimStatus | null;
-  priority: ClaimPriority | null;
   search: string | null;
+  sort: ClaimSortField | null;
 }
 
 export interface ClaimsResponse {

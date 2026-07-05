@@ -318,3 +318,105 @@ Performed a fast, small readability cleanup across delegated server files.
 ### Changes
 
 - Simplified several `ClaimFiltersApplied(...)` instantiations in `server/tests/test_claims.py` by omitting explicit default `None` values, reducing noise at call sites.
+
+---
+
+## Sort Controls Added; Priority Removed from Data Model and UI — 2026-07-05
+
+Replaced the Priority filter with a Sort control across backend and frontend to reduce control density and enable reviewer-friendly ordering.
+
+### Backend Changes
+
+- Added `ClaimSortField` enum to `server/src/models/claims.py` (`updated_at`, `confidence`, `claimant_name`, `status`).
+- Extended `ClaimFiltersApplied` with `sort: ClaimSortField | None = None`.
+- Updated `GET /claims` endpoint to accept `sort` query param and forwarded it to `filter_claims()`.
+- `filter_claims()` now sorts results deterministically:
+  - `updated_at` → newest first (default when unsorted)
+  - `confidence` → highest first
+  - `claimant_name` → alphabetical, case-insensitive
+  - `status` → lexicographic enum order
+
+### Frontend Changes
+
+- Removed `ClaimPriority` type and `priority` field from `client/src/types/claims.ts` `Claim` and `ClaimFiltersApplied`.
+- Added `ClaimSortField` type and `sort` field to `ClaimFiltersApplied`.
+- `client/src/api/claims.ts`: removed `priority` query param; added `sort` query param.
+- `client/src/hooks/useClaimsQuery.ts` and `client/src/hooks/useClaimsSSE.ts`: updated query keys and stream params to use `sort` instead of `priority`.
+- `client/src/components/FilterBar.tsx`: replaced priority dropdown with sort dropdown; extracted `FILTER_SELECT_CLASSES` to deduplicate select styling.
+- `client/src/components/ClaimsTable.tsx` and `client/src/components/ClaimCard.tsx`: added `Claimant` and `Confidence` columns to align with the sortable fields and improve scanability.
+- Tests updated to remove `priority` literals and assert sort column rendering where applicable.
+
+### Trade-off
+
+- The backend still supports the `priority` query parameter; the type remains in `ClaimFiltersApplied` so the capability is not lost—only the UI and client-side model defer it. Re-introducing a Priority UI control can be evaluated after reviewer feedback on the new Sort control.
+
+---
+
+## Cleanup pass: magic numbers — 2026-07-05
+
+Small post-Pass cleanup focused on readability and test ownership. Magic numbers removed, all the other cleanups would be over-engineering.
+
+---
+
+## App.tsx Refactor: Extracted Claims View Model Hook — 2026-07-05
+
+Moved orchestrations out of `client/src/App.tsx` into `client/src/hooks/useClaimsViewModel.ts` to improve separation of concerns and reduce component size.
+
+### Changes
+
+- **New file:** `client/src/hooks/useClaimsViewModel.ts` owns:
+  - `ClaimFiltersApplied` state and debounced search wiring
+  - `useClaimsQuery` and `useClaimsSSE` composition
+  - SSE + REST merge logic (`initial_batch`, `claim_update`)
+  - Row highlighting timer and filter-dependent visibility
+  - Sorting via `useMemo`
+  - Derived state (`hasExistingData`, `highlightedClaimContextValue`)
+- **Updated:** `client/src/App.tsx` now only renders UI and consumes the returned view-model values.
+
+### Rationale
+
+- Keeps `App.tsx` under ~120 lines (view-only).
+- Centralizes data-orchestration rules in one hook so they don't live inline in JSX.
+- Existing tests in `client/src/__tests__/App.test.tsx` continue to pass because they mock `useClaimsQuery` and `useClaimsSSE` directly, which the view-model hook still imports.
+
+---
+
+## React Error Boundary — 2026-07-05
+
+Implemented a root-level React error boundary to prevent unhandled render errors from killing the entire UI.
+
+### Files Created
+
+- `client/src/components/ErrorBoundary.tsx` — class boundary component
+- `client/src/components/BoundaryFallback.tsx` — presentational fallback view
+- `client/src/__tests__/ErrorBoundary.test.tsx` — regression tests
+
+### Files Modified
+
+- `client/src/main.tsx` — wrapped root `App` with `ErrorBoundary`
+
+### Separation of Concerns
+
+Split into two files to match the project's view/logic pattern:
+
+- `ErrorBoundary.tsx` owns error capture/recovery state only
+- `BoundaryFallback.tsx` owns the presentational fallback UI, keeping the boundary class thin
+
+---
+
+## Backend Config Module + .env Fixes — 2026-07-05
+
+### New Files
+
+- `server/src/config.py` — owns API route constants and env loading:
+  - Loads `.env` from repo root via `find_dotenv(filename='.env', usecwd=False)` regardless of CWD
+  - Exports `CORS_ORIGINS`, `CORS_METHODS`, `CORS_HEADERS`
+
+### Changed Files
+
+- `server/main.py` — switched to shared route constants and imported CORS env from `config.py`, removing inline `load_dotenv()` and local env parsing.
+
+### Future Implementation
+
+- Client-side configurable API base via Vite env vars.
+- Backend `API_BASE_URL` support for per-environment deployments.

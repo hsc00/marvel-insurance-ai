@@ -4,8 +4,8 @@ const API_BASE = '/claims';
 
 export async function fetchClaims(filters?: {
   status: ClaimFiltersApplied['status'];
-  priority: ClaimFiltersApplied['priority'];
   search: ClaimFiltersApplied['search'];
+  sort: ClaimFiltersApplied['sort'];
   signal?: AbortSignal;
 }): Promise<ClaimsResponse> {
   const params = new URLSearchParams();
@@ -13,11 +13,11 @@ export async function fetchClaims(filters?: {
   if (filters?.status) {
     params.set('status', filters.status);
   }
-  if (filters?.priority) {
-    params.set('priority', filters.priority);
-  }
   if (filters?.search) {
     params.set('search', filters.search);
+  }
+  if (filters?.sort) {
+    params.set('sort', filters.sort);
   }
 
   const response = await fetch(`${API_BASE}?${params.toString()}`, { signal: filters?.signal });

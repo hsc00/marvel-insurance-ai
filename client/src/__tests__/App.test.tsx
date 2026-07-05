@@ -7,6 +7,8 @@ import { useClaimsSSE } from '../hooks/useClaimsSSE';
 vi.mock('../hooks/useClaimsQuery');
 vi.mock('../hooks/useClaimsSSE');
 
+const DEFAULT_FILTERS = { status: null, search: null, sort: 'updated_at' as const };
+
 describe('App data states', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,7 +40,7 @@ describe('App data states', () => {
       data: {
         items: [],
         total: 0,
-        filters: { status: null, priority: null, search: null },
+        filters: DEFAULT_FILTERS,
       },
       isLoading: false,
       isError: false,
@@ -89,14 +91,13 @@ describe('App data states', () => {
             claim_id: 'CLM-001',
             claimant_name: 'Jane Doe',
             status: 'pending',
-            priority: 'high',
             updated_at: '2024-01-01T00:00:00Z',
             agent_summary: 'Under review',
             confidence: 0.85,
           },
         ],
         total: 1,
-        filters: { status: null, priority: null, search: null },
+        filters: DEFAULT_FILTERS,
       },
       isLoading: false,
       isError: false,
@@ -129,14 +130,13 @@ describe('App data states', () => {
             claim_id: 'CLM-001',
             claimant_name: 'Jane Doe',
             status: 'pending',
-            priority: 'high',
             updated_at: '2024-01-01T00:00:00Z',
             agent_summary: 'Under review',
             confidence: 0.85,
           },
         ],
         total: 1,
-        filters: { status: null, priority: null, search: null },
+        filters: DEFAULT_FILTERS,
       },
       isLoading: false,
       isError: false,
@@ -154,14 +154,13 @@ describe('App data states', () => {
               claim_id: 'CLM-001',
               claimant_name: 'Jane Doe',
               status: 'pending',
-              priority: 'high',
               updated_at: '2024-01-01T00:00:00Z',
               agent_summary: 'Under review',
               confidence: 0.85,
             },
           ],
           total: 1,
-          filters: { status: null, priority: null, search: null },
+          filters: { status: null, search: null, sort: 'updated_at' },
         },
       },
       error: null,
@@ -172,5 +171,56 @@ describe('App data states', () => {
 
     expect(screen.queryByText('Stream error')).not.toBeInTheDocument();
     expect(screen.getAllByText('CLM-001').length).toBeGreaterThan(0);
+  });
+});
+
+describe('Default sort order', () => {
+  it('sorts claims by updated_at descending on first load', () => {
+    const claims = [
+      {
+        id: '1',
+        claim_id: 'CLM-001',
+        claimant_name: 'Oldest',
+        status: 'pending',
+        updated_at: '2024-01-01T00:00:00Z',
+        agent_summary: 'Under review',
+        confidence: 0.85,
+      },
+      {
+        id: '2',
+        claim_id: 'CLM-002',
+        claimant_name: 'Newest',
+        status: 'approved',
+        updated_at: '2024-03-01T00:00:00Z',
+        agent_summary: 'Approved summary',
+        confidence: 0.95,
+      },
+    ];
+
+    vi.mocked(useClaimsQuery).mockReturnValue({
+      data: {
+        items: claims,
+        total: claims.length,
+        filters: DEFAULT_FILTERS,
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    vi.mocked(useClaimsSSE).mockReturnValue({
+      lastEvent: null,
+      error: null,
+      retry: vi.fn(),
+    } as any);
+
+    render(<App />);
+
+    const rows = screen.getAllByRole('row');
+    const dataRowTexts = rows.slice(1).map(row => row.textContent?.trim() || '');
+
+    expect(dataRowTexts[0]).toContain('Newest');
+    expect(dataRowTexts[1]).toContain('Oldest');
   });
 });

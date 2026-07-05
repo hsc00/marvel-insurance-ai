@@ -9,7 +9,6 @@ const claims: Claim[] = [
     claim_id: 'CLM-2026-001',
     claimant_name: 'Alice Johnson',
     status: 'approved',
-    priority: 'high',
     updated_at: '2026-07-05T10:30:00Z',
     agent_summary: 'Approved after review',
     confidence: 0.95,
@@ -19,7 +18,6 @@ const claims: Claim[] = [
     claim_id: 'CLM-2026-002',
     claimant_name: 'Bob Smith',
     status: 'pending',
-    priority: 'low',
     updated_at: '2026-07-06T11:00:00Z',
     agent_summary: 'Awaiting docs',
     confidence: 0.7,
@@ -31,7 +29,9 @@ describe('ClaimsTable', () => {
     render(<ClaimsTable claims={claims} />);
 
     expect(screen.getByText('Claim')).toBeInTheDocument();
+    expect(screen.getByText('Claimant')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
+    expect(screen.getByText('Confidence')).toBeInTheDocument();
     expect(screen.getByText('Date')).toBeInTheDocument();
   });
 

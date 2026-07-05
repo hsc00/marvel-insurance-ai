@@ -5,7 +5,7 @@ import { useHighlightedClaim } from '../hooks/useHighlightedClaim';
 export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
   const { highlightedClaimId } = useHighlightedClaim();
   const isHighlighted = highlightedClaimId === claim.id;
-  const config = getStatusConfig(claim.status);
+  const statusConfig = getStatusConfig(claim.status);
 
   return (
     <tr
@@ -21,12 +21,16 @@ export function ClaimRow({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
           {claim.claim_id}
         </p>
       </td>
+      <td className="px-4 py-3.5 text-sm text-gray-300">{claim.claimant_name}</td>
       <td className="px-4 py-3.5">
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${config.classes}`}
+          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${statusConfig.classes}`}
         >
-          {config.label}
+          {statusConfig.label}
         </span>
+      </td>
+      <td className="px-4 py-3.5 text-sm text-gray-300 tabular-nums">
+        {Math.round(claim.confidence * 100)}%
       </td>
       <td className="px-4 py-3.5 text-sm text-gray-400 tabular-nums">
         {formatDateTime(claim.updated_at)}

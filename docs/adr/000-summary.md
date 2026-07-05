@@ -31,7 +31,6 @@ We have made the following architectural decisions:
 10. **PR Guardrails**: Quality checks, blocking vs advisory (ADR-010)
 11. **Rendering Strategy**: Product SPA + VitePress SSG, SSR deferred (ADR-011)
 12. **Performance/Reliability**: Core Web Vitals targets and state standards (ADR-012)
-13. **BYOC/Environment Config**: Environment-aware configuration (ADR-013)
 
 ## Rationale
 

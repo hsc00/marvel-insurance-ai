@@ -1,86 +1,29 @@
-import { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { Claim, ClaimFiltersApplied } from './types/claims';
-import { useClaimsQuery } from './hooks/useClaimsQuery';
-import { useClaimsSSE } from './hooks/useClaimsSSE';
 import { ClaimsTable } from './components/ClaimsTable';
 import { FilterBar } from './components/FilterBar';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { EmptyState } from './components/EmptyState';
-import { useDebounce } from './hooks/useDebounce';
 import { HighlightedClaimContext } from './hooks/useHighlightedClaim';
+import { useClaimsViewModel } from './hooks/useClaimsViewModel';
 
 const queryClient = new QueryClient();
 
-const SEARCH_DEBOUNCE_MS = 300;
-const HIGHLIGHT_TIMEOUT_MS = 1500;
-
 function ClaimsReviewContent() {
-  const [filters, setFilters] = useState<ClaimFiltersApplied>({
-    status: null,
-    priority: null,
-    search: null,
-  });
-
-  const debouncedSearch = useDebounce(filters.search, SEARCH_DEBOUNCE_MS);
-
-  const { data, isLoading, isError, error, refetch } = useClaimsQuery({
-    ...filters,
-    search: debouncedSearch,
-  });
   const {
-    lastEvent,
-    error: sseError,
-    retry: sseRetry,
-  } = useClaimsSSE({
-    ...filters,
-    search: debouncedSearch,
-  });
-  const [mergedClaims, setMergedClaims] = useState<Claim[]>([]);
-  const [hasInitialBatch, setHasInitialBatch] = useState(false);
-  const [highlightedClaimId, setHighlightedClaimId] = useState<string | null>(null);
-
-  // Reset SSE when filters change so new query data can flow in
-  // until the new stream's initial_batch arrives.
-  useEffect(() => {
-    setHasInitialBatch(false);
-  }, [filters.status, filters.priority, debouncedSearch]);
-
-  // Sync with TanStack Query data when it changes, but only until
-  // the SSE initial_batch arrives and takes precedence.
-  useEffect(() => {
-    if (data?.items && !hasInitialBatch) {
-      setMergedClaims(data.items);
-    }
-  }, [data?.items, hasInitialBatch]);
-
-  // Apply SSE events.
-  useEffect(() => {
-    if (!lastEvent) return;
-    if (lastEvent.type === 'initial_batch') {
-      setHasInitialBatch(true);
-      setMergedClaims(lastEvent.data.items);
-    } else if (lastEvent.type === 'claim_update') {
-      setMergedClaims(prev =>
-        prev.map(claim => (claim.id === lastEvent.data.id ? lastEvent.data : claim))
-      );
-      setHighlightedClaimId(lastEvent.data.id);
-    }
-  }, [lastEvent]);
-
-  useEffect(() => {
-    if (!highlightedClaimId) return;
-    const timer = setTimeout(() => setHighlightedClaimId(null), HIGHLIGHT_TIMEOUT_MS);
-    return () => clearTimeout(timer);
-  }, [highlightedClaimId]);
-
-  const hasExistingData = mergedClaims.length > 0;
-
-  const highlightedClaimContextValue = useMemo(
-    () => ({ highlightedClaimId }),
-    [highlightedClaimId]
-  );
+    filters,
+    onFiltersChange,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    sseError,
+    sseRetry,
+    mergedClaims,
+    sortedClaims,
+    hasExistingData,
+    highlightedClaimContextValue,
+  } = useClaimsViewModel();
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -102,7 +45,7 @@ function ClaimsReviewContent() {
           </div>
 
           <div className="rounded-xl border border-border bg-gray-900 shadow-sm">
-            <FilterBar filters={filters} onFiltersChange={setFilters} />
+            <FilterBar filters={filters} onFiltersChange={onFiltersChange} />
 
             {isLoading && !hasExistingData && (
               <div className="p-6" aria-busy="true" aria-live="polite">
@@ -142,7 +85,7 @@ function ClaimsReviewContent() {
               {mergedClaims.length === 0 && !isLoading && !isError && <EmptyState />}
               {mergedClaims.length > 0 && (
                 <HighlightedClaimContext.Provider value={highlightedClaimContextValue}>
-                  <ClaimsTable claims={mergedClaims} />
+                  <ClaimsTable claims={sortedClaims} />
                 </HighlightedClaimContext.Provider>
               )}
             </div>

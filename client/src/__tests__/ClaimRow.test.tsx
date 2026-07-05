@@ -9,7 +9,6 @@ const claim: Claim = {
   claim_id: 'CLM-2026-001',
   claimant_name: 'Alice Johnson',
   status: 'approved',
-  priority: 'high',
   updated_at: '2026-07-05T10:30:00Z',
   agent_summary: 'Approved after review',
   confidence: 0.95,

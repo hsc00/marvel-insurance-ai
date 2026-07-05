@@ -8,8 +8,10 @@ export function ClaimsTable({ claims }: Readonly<{ claims: readonly Claim[] }>) 
       <div className="hidden md:block overflow-x-auto" aria-label="Claims">
         <table className="w-full table-fixed">
           <colgroup>
-            <col className="w-[65%]" />
-            <col className="w-[15%]" />
+            <col className="w-[40%]" />
+            <col className="w-[18%]" />
+            <col className="w-[12%]" />
+            <col className="w-[10%]" />
             <col className="w-[20%]" />
           </colgroup>
           <thead>
@@ -24,7 +26,19 @@ export function ClaimsTable({ claims }: Readonly<{ claims: readonly Claim[] }>) 
                 className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
                 scope="col"
               >
+                Claimant
+              </th>
+              <th
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                scope="col"
+              >
                 Status
+              </th>
+              <th
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400"
+                scope="col"
+              >
+                Confidence
               </th>
               <th
                 className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400"

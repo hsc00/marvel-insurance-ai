@@ -23,8 +23,8 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.status) params.set('status', filters.status);
-    if (filters.priority) params.set('priority', filters.priority);
     if (filters.search) params.set('search', filters.search);
+    if (filters.sort) params.set('sort', filters.sort);
 
     const url = `/claims/stream?${params.toString()}`;
     const eventSource = new EventSource(url);
@@ -72,7 +72,7 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
     return () => {
       eventSource.close();
     };
-  }, [filters.status, filters.priority, filters.search, retryCount]);
+  }, [filters.status, filters.search, filters.sort, retryCount]);
 
   return { lastEvent, error, retry } as const;
 }
