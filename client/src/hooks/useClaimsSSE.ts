@@ -66,7 +66,6 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
       } catch {
         setError('Stream error');
       }
-      eventSource.close();
     });
 
     return () => {
