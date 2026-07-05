@@ -97,7 +97,8 @@ class TestGetClaimsEndpoint:
     def test_filter_by_status_and_priority(self) -> None:
         """Filtering by both status and priority should return intersection."""
         filters = ClaimFiltersApplied(
-            status=ClaimStatus.APPROVED, priority=ClaimPriority.HIGH, search=None
+            status=ClaimStatus.APPROVED,
+            priority=ClaimPriority.HIGH,
         )
         filtered = filter_claims(CLAIMS_DATA, filters)
         assert len(filtered) == 1
@@ -148,4 +149,4 @@ class TestGetClaimsEndpoint:
     def test_blank_search_rejected(self) -> None:
         """Blank search string should be rejected by Pydantic validation."""
         with pytest.raises(ValidationError):
-            ClaimFiltersApplied(status=None, priority=None, search='   ')
+            ClaimFiltersApplied(search='   ')
