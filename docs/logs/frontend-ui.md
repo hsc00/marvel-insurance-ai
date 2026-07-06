@@ -10,7 +10,7 @@ Built responsive claims table with `ClaimCard` (mobile) and `ClaimRow` (desktop)
 
 ## Real-time and Highlights
 
-TanStack Query caches server state from `GET /claims`. SSE updates merge into the query cache rather than replacing it. After each `claim_update`, a 1.5-second row highlight is triggered via `ClaimIdContext` so reviewers can see which row changed.
+TanStack Query caches server state from `GET /claims`. SSE updates merge into the query cache rather than replacing it. After each `claim_update`, a 1.5-second row highlight is triggered via `HighlightedClaimContext` so reviewers can see which row changed.
 
 ## Architecture Improvements
 

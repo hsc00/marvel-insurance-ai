@@ -6,7 +6,7 @@ The frontend uses a layered state strategy:
 
 1. **TanStack Query** — owns all server state (claims data, loading, error, caching, background refetch). This is the primary bus between backend and UI.
 2. **React `useState`** — local UI state that does not need to be shared, such as filter inputs and sort selection.
-3. **React Context** — lightweight shared UI state that would otherwise require prop drilling. Used for the SSE row-highlight transient state (`ClaimIdContext`).
+3. **React Context** — lightweight shared UI state that would otherwise require prop drilling. Used for the SSE row-highlight transient state (`HighlightedClaimContext`).
 
 A custom `useClaimsViewModel` hook extracts all data orchestration out of `App.tsx`:
 
@@ -59,7 +59,7 @@ SSE lifecycle:
 
 - **Table virtualization** — For a single-page sample dataset, windowing adds a dependency without measurable benefit.
 - **Comprehensive test suite** — Minimal tests demonstrate capability; the take-home rewards strong delivery, not exhaustive coverage.
-- **Theming / dark mode** — Tailwind v4 setup supports future theming without structural changes.
+- **Theming** — Tailwind v4 setup supports future theming without structural changes.
 - **Offline support** — Right-sized for online coverage review only.
 - **CI/CD pipeline** — Local pre-commit hooks + extensions already enforce code quality at development time.
 - **Automatic SSE retry / exponential backoff** — Manual retry is implemented; automatic `EventSource` reconnect follows the SSE spec but is bounded by the hook's async task lifecycle.

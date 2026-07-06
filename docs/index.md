@@ -4,7 +4,7 @@ This documentation site captures the architecture decisions, implementation plan
 
 ## Documentation Principles
 
-- Decisions are recorded as ADRs before and during implementation implementation.
+- Decisions are recorded as ADRs before and during implementation.
 - Project logs are updated right after meaningful work is completed.
 - AI-assisted work must preserve rationale while it is fresh.
 - Quality guardrails should protect delivery without slowing startup-speed iteration.
@@ -12,4 +12,4 @@ This documentation site captures the architecture decisions, implementation plan
 ## Main Sections
 
 - [Implementation Tasks](/implementation-tasks)
- - [Architecture Decision Summary](/adr/000-summary)
+- [Architecture Decision Summary](/adr/000-summary)

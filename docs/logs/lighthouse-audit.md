@@ -2,7 +2,7 @@
 
 ## Accessibility and Performance
 
-### Desktop Lighthouse
+### Lighthouse
 
 - First Contentful Paint: 0.3 s
 - Largest Contentful Paint: 0.4 s
@@ -11,13 +11,9 @@
 - Speed Index: 0.5 s
 - Score: 100%
 
-### Mobile Lighthouse
-
-- Score: 96%
-
 ### Decision
 
-Mobile score is accepted as-is. Further increases would be out of scope for this timeboxed take-home.
+Mobile score wasnt perfect (96% performance) but is accepted as-is. Further increases would be out of scope for this timeboxed take-home.
 
 ### Changes made
 

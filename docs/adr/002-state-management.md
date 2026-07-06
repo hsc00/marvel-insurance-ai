@@ -19,7 +19,7 @@ Key requirements:
 
 ## Decision
 
-We will use TanStack Query (React Query) for server state management and data fetching.
+We will use TanStack Query (React Query) for server state management and data fetching, and React Context to avoid prop drilling for shared UI state.
 
 ## Alternatives Considered
 
