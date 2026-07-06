@@ -1,17 +1,15 @@
 import os
 from pathlib import Path
 
-from dotenv import find_dotenv, load_dotenv
+from dotenv import load_dotenv
 
 # API routes used by the server
 API_PREFIX = '/claims'
 CLAIMS_ROUTE = API_PREFIX
 CLAIMS_STREAM_ROUTE = f'{API_PREFIX}/stream'
 
-# Load the closest .env starting from the current module's directory.
-# This finds `server/.env` first, regardless of where `uvicorn` is started from.
-REPO_ROOT = Path(__file__).resolve().parents[2]
-ENV_PATH = find_dotenv(filename='.env', usecwd=False) or str(REPO_ROOT / '.env')
+# Load `.env` from the server directory.
+ENV_PATH = Path(__file__).resolve().parent.parent / '.env'
 load_dotenv(dotenv_path=ENV_PATH)
 
 # CORS configuration
