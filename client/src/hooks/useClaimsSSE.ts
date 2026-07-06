@@ -1,6 +1,10 @@
 import { useEffect, useCallback, useState } from 'react';
 import type { SSEClaimUpdateEvent, ClaimFiltersApplied } from '../types/claims';
 
+/**
+ * Safely parses data payloads from Server-Sent Events.
+ * Intentionally swallows raw parsing errors to normalize downstream generic error messaging.
+ */
 function parseSseEventData(event: Event) {
   try {
     const data = (event as MessageEvent<string>).data;
@@ -10,11 +14,18 @@ function parseSseEventData(event: Event) {
   }
 }
 
+/**
+ * Custom hook managing a real-time Server-Sent Events (SSE) connection.
+ * Dynamically teardowns and rebuilds the stream connection when filters change
+ * or a manual retry is triggered.
+ */
 export function useClaimsSSE(filters: ClaimFiltersApplied) {
   const [lastEvent, setLastEvent] = useState<SSEClaimUpdateEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
 
+  // Manual escape hatch allowing the client to forcefully recreate
+  // the EventSource instance if it lands in a stuck state.
   const retry = useCallback(() => {
     setError(null);
     setRetryCount(prev => prev + 1);
@@ -29,6 +40,8 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
     const url = `/claims/stream?${params.toString()}`;
     const eventSource = new EventSource(url);
 
+    // Event handlers clear previous transient errors upon a successful
+    // parse to seamlessly auto-heal the UI state.
     eventSource.addEventListener('initial_batch', (event: Event) => {
       try {
         const parsed = parseSseEventData(event);
@@ -68,6 +81,8 @@ export function useClaimsSSE(filters: ClaimFiltersApplied) {
       }
     });
 
+    // Closes the connection on unmount or filter adjustments to prevent
+    // connection leaks or data mixing.
     return () => {
       eventSource.close();
     };

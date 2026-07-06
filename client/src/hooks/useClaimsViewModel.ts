@@ -3,43 +3,17 @@ import type { Claim, ClaimFiltersApplied } from '../types/claims';
 import { useClaimsQuery } from './useClaimsQuery';
 import { useClaimsSSE } from './useClaimsSSE';
 import { useDebounce } from './useDebounce';
+import { compareClaimsBy, matchesFilters } from '../utils/claimUtils';
 
 const SEARCH_DEBOUNCE_MS = 300;
 const HIGHLIGHT_TIMEOUT_MS = 1500;
 
-type SortField = ClaimFiltersApplied['sort'];
-
-function matchesFilters(claim: Claim, filters: ClaimFiltersApplied) {
-  if (filters.status && claim.status !== filters.status) return false;
-  if (filters.search) {
-    const term = filters.search.toLowerCase();
-    if (
-      !claim.claimant_name.toLowerCase().includes(term) &&
-      !claim.claim_id.toLowerCase().includes(term) &&
-      !claim.agent_summary.toLowerCase().includes(term)
-    ) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function compareClaimsBy(field: SortField) {
-  return (first: Claim, second: Claim): number => {
-    switch (field) {
-      case 'claimant_name':
-        return first.claimant_name.localeCompare(second.claimant_name);
-      case 'confidence':
-        return second.confidence - first.confidence;
-      case 'status':
-        return first.status.localeCompare(second.status);
-      case 'updated_at':
-      default:
-        return new Date(second.updated_at).getTime() - new Date(first.updated_at).getTime();
-    }
-  };
-}
-
+/**
+ * Orchestrates claim data by synchronizing initial REST snapshots (useClaimsQuery)
+ * with real-time SSE updates (useClaimsSSE).
+ * Provides a unified 'mergedClaims' state for the UI, handling debounced filtering
+ * and local sorting.
+ */
 export function useClaimsViewModel() {
   const [filters, setFilters] = useState<ClaimFiltersApplied>({
     status: null,
@@ -72,16 +46,24 @@ export function useClaimsViewModel() {
     [filters, debouncedSearch]
   );
 
+  // Reset the initial batch flag when user inputs change, forcing
+  // the app to wait for a fresh 'initial_batch' event from the stream.
   useEffect(() => {
     setHasInitialBatch(false);
   }, [filters.status, debouncedSearch, filters.sort]);
 
+  // Fallback: If the stream hasn't provided an initial_batch yet,
+  // hydrate the state with data from the REST API query.
   useEffect(() => {
     if (data?.items && !hasInitialBatch) {
       setMergedClaims(data.items);
     }
   }, [data?.items, hasInitialBatch]);
 
+  // Synchronizes local state with SSE updates:
+  // 1. Initial batches force a complete reset of the claim list.
+  // 2. Updates perform a targeted map of existing items.
+  // 3. Claims that fall out of filter scope are removed from the list.
   useEffect(() => {
     if (!lastEvent) return;
     if (lastEvent.type === 'initial_batch') {
@@ -92,10 +74,12 @@ export function useClaimsViewModel() {
         const updated = prev.map(claim =>
           claim.id === lastEvent.data.id ? lastEvent.data : claim
         );
+        // Remove the claim if it no longer matches the current filters.
         return matchesFilters(lastEvent.data, debouncedFilters)
           ? updated
           : updated.filter(claim => claim.id !== lastEvent.data.id);
       });
+      // Ensure the updated claim is highlighted if it matches the current filters.
       if (matchesFilters(lastEvent.data, debouncedFilters)) {
         setHighlightedClaimId(lastEvent.data.id);
       }

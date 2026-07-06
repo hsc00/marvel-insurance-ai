@@ -4,7 +4,7 @@ import { ClaimCard } from './ClaimCard';
 
 export function ClaimsTable({ claims }: Readonly<{ claims: readonly Claim[] }>) {
   return (
-    <div>
+    <div style={{ overflowAnchor: 'none' }}>
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full table-fixed" aria-label="Claims">
           <caption className="sr-only">Claims review activity</caption>
