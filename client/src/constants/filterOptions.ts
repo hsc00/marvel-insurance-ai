@@ -12,7 +12,3 @@ export const SORT_OPTIONS = [
   { value: 'claimant_name', label: 'Sort: Name' },
   { value: 'status', label: 'Sort: Status' },
 ] as const;
-
-export type FilterStatusValue = (typeof STATUS_OPTIONS)[number]['value'];
-
-export type FilterSortValue = (typeof SORT_OPTIONS)[number]['value'];
