@@ -9,7 +9,7 @@ Real-time claims review UI project.
 - `docs/` — VitePress documentation site
 - `.github/agents/` and `.github/skills/` — Github Copilot sub agents orchestration configuration
 
-## Documentation
+## Documentation (VitePress)
 
 Detailed decisions, state management rationale, data contract notes, real-time notes, skipped features, and future roadmap live in `docs/app-overview.md`. Architecture decisions are recorded in `docs/adr/`.
 
@@ -89,15 +89,6 @@ py -m uvicorn main:app --reload --port 8000
 ```
 
 If `uvicorn` isn't found in your PATH after `pip install`, run it with the Python module form: `python -m uvicorn main:app`.
-
-### Docs (VitePress)
-
-```bash
-cd docs
-npm install
-npm run dev
-# open the dev URL shown in the terminal (Vite/VitePress defaults to a local port)
-```
 
 ## Quality Guardrails
 
