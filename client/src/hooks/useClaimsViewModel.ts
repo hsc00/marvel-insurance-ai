@@ -23,11 +23,13 @@ export function useClaimsViewModel() {
 
   const debouncedSearch = useDebounce(filters.search, SEARCH_DEBOUNCE_MS);
 
+  // REST snapshot: initial page of claims matching the debounced filters.
   const { data, isLoading, isError, error, refetch } = useClaimsQuery({
     ...filters,
     search: debouncedSearch,
   });
 
+  // SSE stream: subscribes to real-time claim updates using the same debounced filters.
   const {
     lastEvent,
     error: sseError,
@@ -41,6 +43,7 @@ export function useClaimsViewModel() {
   const [hasInitialBatch, setHasInitialBatch] = useState(false);
   const [highlightedClaimId, setHighlightedClaimId] = useState<string | null>(null);
 
+  // Stable filter object for useEffects and downstream matchers.
   const debouncedFilters = useMemo(
     () => ({ ...filters, search: debouncedSearch }),
     [filters, debouncedSearch]
@@ -86,6 +89,7 @@ export function useClaimsViewModel() {
     }
   }, [lastEvent, debouncedFilters]);
 
+  // Clears the highlight after timeout.
   useEffect(() => {
     if (!highlightedClaimId) return;
     const timer = setTimeout(() => setHighlightedClaimId(null), HIGHLIGHT_TIMEOUT_MS);
@@ -94,11 +98,14 @@ export function useClaimsViewModel() {
 
   const hasExistingData = mergedClaims.length > 0;
 
+  // Locally sorted view of mergedClaims to keep the
+  // list order stable and comparable.
   const sortedClaims = useMemo(() => {
     if (!filters.sort) return mergedClaims;
     return [...mergedClaims].sort(compareClaimsBy(filters.sort));
   }, [mergedClaims, filters.sort]);
 
+  // Context value exposed to descendant components.
   const highlightedClaimContextValue = useMemo(
     () => ({ highlightedClaimId }),
     [highlightedClaimId]
