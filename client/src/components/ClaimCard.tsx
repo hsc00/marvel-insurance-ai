@@ -5,7 +5,7 @@ import { useHighlightedClaim } from '../hooks/useHighlightedClaim';
 export function ClaimCard({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
   const { highlightedClaimId } = useHighlightedClaim();
   const isHighlighted = highlightedClaimId === claim.id;
-  const config = getStatusConfig(claim.status);
+  const statusConfig = getStatusConfig(claim.status);
 
   return (
     <div
@@ -29,10 +29,10 @@ export function ClaimCard({ claim }: Readonly<{ claim: Readonly<Claim> }>) {
           </p>
         </div>
         <span
-          aria-label={`Status: ${config.label}`}
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${config.classes}`}
+          aria-label={`Status: ${statusConfig.label}`}
+          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${statusConfig.classes}`}
         >
-          {config.label}
+          {statusConfig.label}
         </span>
       </div>
       <div className="flex items-center justify-between text-xs text-gray-400 tabular-nums">
